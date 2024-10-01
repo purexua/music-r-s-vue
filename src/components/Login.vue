@@ -1,7 +1,7 @@
 <template>
   <div class="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
-      <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+      <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=black&shade=600"
         alt="Your Company" />
       <h2 class="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">登录您的账户</h2>
     </div>
@@ -13,7 +13,7 @@
             <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Username</label>
             <div class="mt-2">
               <input id="username" v-model="username" name="username" type="text" autocomplete="username" required
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6" />
             </div>
           </div>
 
@@ -22,25 +22,25 @@
             <div class="mt-2">
               <input id="password" v-model="password" name="password" type="password" autocomplete="current-password"
                 required
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6" />
             </div>
           </div>
 
           <div class="flex items-center justify-between">
             <div class="flex items-center">
               <input id="remember-me" v-model="rememberMe" name="remember-me" type="checkbox"
-                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" />
+                class="h-4 w-4 rounded border-gray-300 text-gray-600 focus:ring-gray-600" />
               <label for="remember-me" class="ml-3 block text-sm leading-6 text-gray-900">记住密码</label>
             </div>
 
             <div class="text-sm leading-6">
-              <a href="#" class="font-semibold text-indigo-600 hover:text-indigo-500">忘记密码？</a>
+              <a href="#" class="font-semibold text-gray-600 hover:text-gray-500">忘记密码？</a>
             </div>
           </div>
 
           <div>
             <button type="submit"
-              class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">登录</button>
+              class="flex w-full justify-center rounded-md bg-gray-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">登录</button>
           </div>
         </form>
 
@@ -91,7 +91,7 @@
         还没有账号？
         {{ ' ' }}
         <router-link to="/register"
-          class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">注册</router-link>
+          class="font-semibold leading-6 text-gray-600 hover:text-gray-500">注册</router-link>
       </p>
     </div>
   </div>
@@ -102,6 +102,7 @@ import { ref } from 'vue'
 import { useAlert } from '../utils/alert'
 import { useRouter } from 'vue-router'
 import { login } from '../api/httpClient'
+import { useUserStore } from '../store/user'
 
 const username = ref('')
 const password = ref('')
@@ -109,35 +110,31 @@ const rememberMe = ref(false)
 const { showAlert } = useAlert()
 const router = useRouter()
 
+const userStore = useUserStore()
+
 const handleSubmit = async () => {
   try {
-    const response = await login(username.value, password.value)
-
-    if (response.data.code === 0) {
-      localStorage.setItem('user_id', response.data.data.user_id)
-      localStorage.setItem('token', response.data.data.token)
-      localStorage.setItem('refresh_token', response.data.data.refresh_token)
+    const result = await login(username.value, password.value)
+    if (result.code === 0) {
+      userStore.setUserId(result.data.user_id)
+      userStore.setUserName(username.value)
       showAlert({
         title: '登录成功',
         type: 'success',
         closable: true,
-        closeText: '关闭',
         duration: 3000
       })
       router.push('/')
     } else {
-      throw new Error(response.data.data)
+      throw new Error(result.data)
     }
   } catch (error) {
     showAlert({
       title: '登录失败：' + (error instanceof Error ? error.message : '未知错误'),
       type: 'error',
       closable: true,
-      closeText: '关闭',
       duration: 3000
     })
   }
 }
-
 </script>
-

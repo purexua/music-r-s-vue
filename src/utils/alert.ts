@@ -20,10 +20,9 @@ export function useAlert() {
         title: string,
         type?: 'info' | 'warning' | 'success' | 'error',
         closable?: boolean,
-        closeText?: string,
         duration?: number
     }) => {
-        const { title, type = 'info', closable = true, closeText = '', duration = 3000 } = options
+        const { title, type = 'info', closable = true, duration = 3000 } = options
 
         createAlertContainer()
 
@@ -37,7 +36,6 @@ export function useAlert() {
                     title,
                     type,
                     closable,
-                    closeText,
                     onClose: () => {
                         app.unmount()
                         alertContainer!.removeChild(alertDiv)

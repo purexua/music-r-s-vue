@@ -103,13 +103,17 @@ import { ref, onMounted } from 'vue'
 import { useAlert } from '../utils/alert'
 import { useRouter } from 'vue-router'
 import { login } from '../api/httpClient'
+import { useUserStore } from '../store/user'
 
 const username = ref('')
 const password = ref('')
 const rememberMe = ref(false)
 const { showAlert } = useAlert()
 const router = useRouter()
+const userStore = useUserStore()
+
 let captcha: any
+
 
 const initCaptcha = () => {
   const script = document.createElement('script')
@@ -142,13 +146,15 @@ const getInstance = (instance: any) => {
 
 const captchaVerifyCallback = async (captchaVerifyParam: string) => {
   try {
-    const response = await login(username.value, password.value, captchaVerifyParam)
+    const result = await login(username.value, password.value, captchaVerifyParam)
 
-    if (response.data.code === 0) {
+    if (result.code === 0) {
+      userStore.setUserId(result.data.user_id)
+      userStore.setUserName(username.value)
       return { captchaResult: true, bizResult: true }
     } else {
       return {
-        captchaResult: response.data.msg !== 'false',
+        captchaResult: result.msg !== 'false',
         bizResult: false
       }
     }
@@ -165,7 +171,6 @@ const onBizResultCallback = (result: boolean) => {
       title: '登录成功',
       type: 'success',
       closable: true,
-      closeText: '关闭',
       duration: 3000
     })
     router.push('/')
@@ -174,7 +179,6 @@ const onBizResultCallback = (result: boolean) => {
       title: '登录失败',
       type: 'error',
       closable: true,
-      closeText: '关闭',
       duration: 3000
     })
   }

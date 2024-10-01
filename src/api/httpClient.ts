@@ -72,53 +72,52 @@ export interface RegisterResponse {
     refresh_token: string;
 }
 
-// 登录请求：保存 token 和 refresh_token
+// 新增函数：保存用户信息到本地存储
+function saveUserTokenToLocalStorage(userData: LoginResponse | RegisterResponse) {
+    const { user_id, token, refresh_token } = userData;
+    localStorage.setItem('user_id', user_id.toString());
+    localStorage.setItem('token', token);
+    localStorage.setItem('refresh_token', refresh_token);
+}
+
+// 登录请求
 // export async function login(username: string, password: string, captchaVerifyParam: string) {
 export async function login(username: string, password: string) {
     try {
-        const response = await userClient.post('/login', {
-            username,
-            password,
+        const response = await userClient.post('/auth', {
+            username, password,
             // captcha_verify_param: captchaVerifyParam
         });
         if (response.data.code === 0) {
-            const { user_id, token, refresh_token } = response.data.data;
-            // 保存 user_id、token 和 refresh_token 到本地存储
-            localStorage.setItem('user_id', user_id.toString());
-            localStorage.setItem('token', token);
-            localStorage.setItem('refresh_token', refresh_token);
+            saveUserTokenToLocalStorage(response.data.data);
         }
-        return response;
+        return response.data;
     } catch (error) {
         console.error('登录失败', error);
         throw error;
     }
 }
 
-// 注册请求：保存 token 和 refresh_token
+// 注册请求
 export async function register(username: string, password: string) {
     try {
-        const response = await userClient.post('/register', { username, password });
+        const response = await userClient.post('/users', { username, password });
         if (response.data.code === 0) {
-            const { user_id, token, refresh_token } = response.data.data;
-            // 保存 user_id、token 和 refresh_token 到本地存储
-            localStorage.setItem('user_id', user_id.toString());
-            localStorage.setItem('token', token);
-            localStorage.setItem('refresh_token', refresh_token);
+            saveUserTokenToLocalStorage(response.data.data);
         }
-        return response;
+        return response.data;
     } catch (error) {
         console.error('注册失败', error);
         throw error;
     }
 }
 
-// 刷新 token 的方法
+// 刷新 token 请求
 async function refreshToken(userId: number) {
     const refresh_token = localStorage.getItem('refresh_token'); // 从本地存储获取 refresh_token
     try {
         // 调用后端刷新 token 接口，并在请求头中添加 refresh_token
-        return await userClient.get(`/refresh/${userId}`, {
+        return await userClient.get(`/auth/refresh/${userId}`, {
             headers: { 'RefreshToken': refresh_token }
         });
     } catch (error) {
@@ -127,15 +126,34 @@ async function refreshToken(userId: number) {
     }
 }
 
-// 获取用户信息
+// 获取用户信息请求
 export async function getUserInfo(id: number) {
     try {
-        return await userClient.get(`/user/info/${id}`);
+        const response = await userClient.get(`/users/${id}/info`);
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取用户信息失败');
+        }
     } catch (error) {
         console.error('获取用户信息失败', error);
         throw error;
     }
 }
 
+// 修改密码请求 传 id 和 新旧密码
+export async function changePassword(id: number, oldPassword: string, newPassword: string) {
+    try {
+        const response = await userClient.put(`/users/${id}/password`, { old_password: oldPassword, new_password: newPassword });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '修改密码失败');
+        }
+    } catch (error) {
+        console.error('修改密码失败', error);
+        throw error;
+    }
+}
 
 // 其他接口方法...

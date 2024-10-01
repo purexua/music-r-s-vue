@@ -1,33 +1,31 @@
 <template>
-  <div v-if="isVisible" :class="[
-    'rounded-md p-4 my-2',
-    colorClasses[type as keyof typeof colorClasses].bg
-  ]">
-    <div class="flex">
-      <div class="flex-shrink-0">
-        <component :is="icon" :class="[
-          'h-5 w-5',
-          colorClasses[type as keyof typeof colorClasses].icon
-        ]" aria-hidden="true" />
-      </div>
-      <div class="ml-3">
-        <p :class="[
-          'text-sm',
-          colorClasses[type as keyof typeof colorClasses].text,
-          { 'font-medium': type !== 'info' }
-        ]">
-          {{ title }}
-        </p>
-      </div>
-      <div v-if="closable" class="ml-auto pl-3">
-        <div class="-mx-1.5 -my-1.5">
+  <div v-if="isVisible" class="flex justify-center w-full">
+    <div :class="[
+      'w-full max-w-2xl rounded-md p-4 my-2',
+      colorClasses[type as keyof typeof colorClasses].bg
+    ]">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <component :is="icon" :class="[
+            'h-5 w-5',
+            colorClasses[type as keyof typeof colorClasses].icon
+          ]" aria-hidden="true" />
+        </div>
+        <div class="ml-3 flex-grow">
+          <p :class="[
+            'text-sm',
+            colorClasses[type as keyof typeof colorClasses].text,
+            { 'font-medium': type !== 'info' }
+          ]">
+            {{ title }}
+          </p>
+        </div>
+        <div v-if="closable" class="ml-auto pl-3">
           <button type="button" :class="[
             'inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2',
             colorClasses[type as keyof typeof colorClasses].button
           ]" @click="close">
-            <span class="sr-only">{{ closeText }}</span>
-            <XMarkIcon v-if="!closeText" class="h-5 w-5" aria-hidden="true" />
-            <span v-else>{{ closeText }}</span>
+            <XMarkIcon class="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -52,10 +50,6 @@ const props = defineProps({
   closable: {
     type: Boolean,
     default: true
-  },
-  closeText: {
-    type: String,
-    default: ''
   }
 })
 
@@ -68,7 +62,14 @@ const close = () => {
   emit('close')
 }
 
-const colorClasses = {
+interface ColorClasses {
+  bg: string
+  icon: string
+  text: string
+  button: string
+}
+
+const colorClasses: Record<string, ColorClasses> = {
   info: {
     bg: 'bg-blue-50',
     icon: 'text-blue-400',
@@ -105,14 +106,4 @@ const icon = computed(() => {
 })
 </script>
 
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>
+<style scoped></style>
