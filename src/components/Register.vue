@@ -1,7 +1,7 @@
 <template>
     <div class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-            <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=black&shade=600"
+            <img class="mx-auto h-10 w-auto" src="http://127.0.0.1:8000/music-r-s/logo.svg"
                 alt="Your Company" />
             <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">创建新账户</h2>
         </div>
@@ -54,7 +54,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useAlert } from '../utils/alert'
 import { useRouter } from 'vue-router'
 import { register } from '../api/httpClient'
 import { useUserStore } from '../store/user'
@@ -65,17 +64,11 @@ const userStore = useUserStore()
 const username = ref('')
 const password = ref('')
 const confirmPassword = ref('')
-const { showAlert } = useAlert()
 
 
 const handleRegister = async () => {
     if (password.value !== confirmPassword.value) {
-        showAlert({
-            title: '密码不匹配',
-            type: 'error',
-            closable: true,
-            duration: 3000
-        })
+        alert('密码不匹配')
         return
     }
 
@@ -85,23 +78,13 @@ const handleRegister = async () => {
         if (result.code === 0) {
             userStore.setUserId(result.data.user_id)
             userStore.setUserName(username.value)
-            showAlert({
-                title: '注册成功',
-                type: 'success',
-                closable: true,
-                duration: 3000
-            })
+            alert('注册成功')
             router.push('/')
         } else {
             throw new Error(result.data)
         }
     } catch (error) {
-        showAlert({
-            title: '注册失败：' + (error instanceof Error ? error.message : '未知错误'),
-            type: 'error',
-            closable: true,
-            duration: 3000
-        })
+        alert('注册失败：' + (error instanceof Error ? error.message : '未知错误'))
     }
 }
 </script>

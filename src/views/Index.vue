@@ -28,14 +28,15 @@ onMounted(async () => {
         if (userId) {
             const result = await getUserInfo(userId)
             if (result.code === 0) {
-                const userInfo: UserInfo = result.data.user_info
-                userStore.setUserInfo(userInfo)
+                let info: UserInfo = result.data.user_info
+                localStorage.setItem('user_info', JSON.stringify(info))
+                userStore.setUserInfo(info)
             } else {
                 console.error('获取用户信息失败:', result.msg)
             }
         }
     } catch (error) {
-        console.error('获取用户信息失败', error)
+        console.error('获取或设置用户信息失败', error)
     }
 })
 

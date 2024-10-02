@@ -1,7 +1,7 @@
 <template>
   <div class="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
-      <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+      <img class="mx-auto h-10 w-auto" src="http://127.0.0.1:8000/music-r-s/logo.svg"
         alt="Your Company" />
       <h2 class="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">登录您的账户</h2>
     </div>
@@ -100,7 +100,6 @@
 
 <script setup lang="ts" name="Login">
 import { ref, onMounted } from 'vue'
-import { useAlert } from '../utils/alert'
 import { useRouter } from 'vue-router'
 import { login } from '../api/httpClient'
 import { useUserStore } from '../store/user'
@@ -108,7 +107,6 @@ import { useUserStore } from '../store/user'
 const username = ref('')
 const password = ref('')
 const rememberMe = ref(false)
-const { showAlert } = useAlert()
 const router = useRouter()
 const userStore = useUserStore()
 
@@ -167,20 +165,10 @@ const captchaVerifyCallback = async (captchaVerifyParam: string) => {
 const onBizResultCallback = (result: boolean) => {
   console.log("result", result)
   if (result === true) {
-    showAlert({
-      title: '登录成功',
-      type: 'success',
-      closable: true,
-      duration: 3000
-    })
+    alert('登录成功')
     router.push('/')
   } else {
-    showAlert({
-      title: '登录失败',
-      type: 'error',
-      closable: true,
-      duration: 3000
-    })
+    alert('登录失败')
   }
 }
 

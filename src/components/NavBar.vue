@@ -5,9 +5,9 @@
         <div class="flex">
           <div class="flex flex-shrink-0 items-center">
             <img class="block h-8 w-auto lg:hidden"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />
+              src="http://127.0.0.1:8000/music-r-s/logo.svg" alt="Your Company" />
             <img class="hidden h-8 w-auto lg:block"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />
+              src="http://127.0.0.1:8000/music-r-s/logo.svg" alt="Your Company" />
           </div>
           <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
             <RouterLink v-for="item in activeNavigation" :key="item.index" :to="item.href"
@@ -53,9 +53,10 @@
       </div>
       <div class="border-t border-gray-200 pb-3 pt-4">
         <div class="flex items-center px-4">
-          <div class="flex-shrink-0">
-            <img class="h-10 w-10 rounded-full" :src="userStore.userInfo?.avatar_url" alt="" />
+          <div class="flex-shrink-0" v-if="userStore.userInfo.avatar_url !== ''">
+            <img class="h-10 w-10 rounded-full" :src="userStore.userInfo.avatar_url" alt="" /> 
           </div>
+          <UserCircleIcon v-else class="h-10 w-10 text-gray-300" aria-hidden="true" />
           <div class="ml-3">
             <div class="text-base font-medium text-gray-800">{{ userStore.username }}</div>
             <div class="text-sm font-medium text-gray-500">{{ userStore.userInfo?.email }}</div>
@@ -76,6 +77,7 @@ import { computed } from 'vue'
 import NotificationMenu from './NotificationMenu.vue'
 import UserMenu from './UserMenu.vue'
 import { useUserStore } from '../store/user'
+import { UserCircleIcon } from '@heroicons/vue/24/outline'
 import { NavigationItem } from '../types/global'
 
 const route = useRoute()

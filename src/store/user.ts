@@ -4,20 +4,33 @@ import { UserInfo } from '../types/global'
 
 
 export const useUserStore = defineStore('user', () => {
-    const userId = ref<number | null>(null)
-    const username = ref<string | null>(null)
-    const userInfo = ref<UserInfo | null>(null)
+    const userId = ref<number >(-1)
+    const username = ref<string >('')
 
-    const isLoggedIn = computed(() => userId.value !== null)
+    const defaultUserInfo: UserInfo = {
+        id: -1,
+        avatar_url: '',
+        cover_url: '',
+        age: 0,
+        gender: '',
+        birthday: '',
+        email: '',
+        description: ''
+    }
+    
+    const userInfo = ref<UserInfo>(defaultUserInfo)
+
+
+    const isLoggedIn = computed(() => userId.value !== -1)
 
     function logout() {
         // 清除 localStorage 中的所有数据
         localStorage.clear();
 
         // 重置用户状态
-        userId.value = null;
+        userId.value = -1;
         username.value = '';
-        userInfo.value = null;
+        userInfo.value = defaultUserInfo;
     }
 
     function setUserId(id: number) {
@@ -32,11 +45,15 @@ export const useUserStore = defineStore('user', () => {
         userInfo.value = info
     }
 
+
     function initializeFromStorage() {
         const storedUserId = localStorage.getItem('user_id')
         const storedUserName = localStorage.getItem('user_name')
-        userId.value = storedUserId ? parseInt(storedUserId, 10) : null
-        username.value = storedUserName ? storedUserName : null
+        const storedUserInfo = localStorage.getItem('user_info')
+
+        userId.value = storedUserId ? parseInt(storedUserId, 10) : -1
+        username.value = storedUserName ? storedUserName : ''
+        userInfo.value = storedUserInfo ? JSON.parse(storedUserInfo) : defaultUserInfo
     }
 
     watch(userId, (newUserId) => {
@@ -52,6 +69,14 @@ export const useUserStore = defineStore('user', () => {
             localStorage.removeItem('user_name')
         } else {
             localStorage.setItem('user_name', newUserName)
+        }
+    })
+
+    watch(userInfo, (newUserInfo) => {
+        if (newUserInfo === null) {
+            localStorage.removeItem('user_info')
+        } else {
+            localStorage.setItem('user_info', JSON.stringify(newUserInfo))
         }
     })
 

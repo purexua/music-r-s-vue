@@ -156,4 +156,67 @@ export async function changePassword(id: number, oldPassword: string, newPasswor
     }
 }
 
-// 其他接口方法...
+// 更新用户信息请求
+export async function updateUserInfo(id: number, userInfo: any) {
+    try {
+        const response = await userClient.put(`/users/${id}/info`, userInfo);
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '更新用户信息失败');
+        }
+    } catch (error) {
+        console.error('更新用户信息失败', error);
+        throw error;
+    }
+}
+
+
+// 上传头像请求
+export async function uploadAvatar(id: number, file: File) {
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await userClient.post(`/users/${id}/avatar`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '上传头像失败');
+        }
+    } catch (error) {
+        console.error('上传头像失败', error);
+        throw error;
+    }
+}
+
+// 上传封面请求
+export async function uploadCover(id: number, file: File) {
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await userClient.post(`/users/${id}/cover`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '上传封面失败');
+        }
+    } catch (error) {
+        console.error('上传封面失败', error);
+        throw error;
+    }
+}
+
+// ... 其他接口方法 ...
+
