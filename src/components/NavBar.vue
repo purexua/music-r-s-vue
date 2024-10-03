@@ -53,7 +53,7 @@
       </div>
       <div class="border-t border-gray-200 pb-3 pt-4">
         <div class="flex items-center px-4">
-          <div class="flex-shrink-0" v-if="userStore.userInfo.avatar_url !== ''">
+          <div class="flex-shrink-0" v-if="userStore.userInfo.avatar_url !== '' && userStore.userInfo.avatar_url !== null && userStore.userInfo.avatar_url !== undefined">  
             <img class="h-10 w-10 rounded-full" :src="userStore.userInfo.avatar_url" alt="" /> 
           </div>
           <UserCircleIcon v-else class="h-10 w-10 text-gray-300" aria-hidden="true" />

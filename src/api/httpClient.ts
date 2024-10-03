@@ -218,5 +218,90 @@ export async function uploadCover(id: number, file: File) {
     }
 }
 
+// 获取歌手列表请求
+
+export async function getSingerSimpleInfoListByCountryAndGender(country: string, gender: string, pageNum: number, pageSize: number) {
+    try {
+        const response = await userClient.get(`/singers/info`, {
+            params: { country, gender, pageNum, pageSize }
+        });
+
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取歌手列表失败');
+        }
+    } catch (error) {
+        console.error('获取歌手列表失败', error);
+        throw error;
+    }
+}
+
+// 获取歌手详细信息
+export async function getSingerInfo(id: number) {
+    try {
+        const response = await userClient.get(`/singers/${id}/info`);
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取歌手详细信息失败');
+        }
+    } catch (error) {
+        console.error('获取歌手详细信息失败', error);
+        throw error;
+    }
+}
+
+// 用户是否关注歌手
+export async function isFollowingSinger(userId: number, singerId: number) {
+    try {
+        const response = await userClient.get(`/users/${userId}/follow`, {
+            params: {
+                singer_id: singerId
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('检查用户是否关注歌手失败', error);
+        throw error;
+    }
+}
+
+// 关注歌手
+export async function followSinger(userId: number, singerId: number) {
+    try {
+        const response = await userClient.post(`/users/${userId}/follow`, null, { 
+            params: {
+                singer_id: singerId
+            }
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '关注歌手失败');
+        }
+    } catch (error) {
+        console.error('关注歌手失败', error);
+        throw error;
+    }
+}
+
+// 取消关注歌手
+export async function unfollowSinger(userId: number, singerId: number) {
+    try {
+        const response = await userClient.delete(`/users/${userId}/follow`, {
+            params: { singer_id: singerId }
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '取消关注歌手失败');
+        }
+    } catch (error) {
+        console.error('取消关注歌手失败', error);
+        throw error;
+    }
+}
+
 // ... 其他接口方法 ...
 

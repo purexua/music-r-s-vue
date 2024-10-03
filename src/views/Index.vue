@@ -2,13 +2,10 @@
     <div class="min-h-full">
         <NavBar :navigation="navigation" :notificationNavigation="notificationNavigation"
             :userNavigation="userNavigation" />
-        <div class="py-4">
-            <main>
-                <div class="mx-auto max-w-7xl px-2 py-2 sm:px-6 lg:px-8">
-                    <RouterView />
-                </div>
-            </main>
-        </div>
+        <main class="mx-auto px-4 py-2 sm:px-6 lg:px-8">
+            <RouterView />
+        </main>
+
     </div>
 </template>
 

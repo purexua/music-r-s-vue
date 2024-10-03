@@ -33,7 +33,7 @@
                         <div class="col-span-full">
                             <label for="avatar" class="block text-sm font-medium leading-6 text-gray-900">头像</label>
                             <div class="mt-2 flex items-center gap-x-3">
-                                <img v-if="userStore.userInfo.avatar_url !== ''" :src="userStore.userInfo.avatar_url" alt="用户头像"
+                                <img v-if="userStore.userInfo.avatar_url !== '' && userStore.userInfo.avatar_url !== null && userStore.userInfo.avatar_url !== undefined" :src="userStore.userInfo.avatar_url" alt="用户头像"
                                     class="h-12 w-12 rounded-full object-cover" />
                                 <UserCircleIcon v-else class="h-12 w-12 text-gray-300" aria-hidden="true" />
                                 <label for="avatar-upload"
@@ -227,12 +227,29 @@ const handleAvatarChange = async (event: Event) => {
         }
 
         try {
-            const response = await uploadAvatar(userStore.userId!, file);
-            if (response.code === 0) {
-                avatarPhotoUrl.value = response.data.avatarURL;
-                alert('头像上传成功');
+            const uploadAvatarResult = await uploadAvatar(userStore.userId!, file);
+            if (uploadAvatarResult.code === 0) {
+                // 后端请求更新用户信息
+                const updatedUserInfo: UserInfo = {
+                    id: userStore.userId,
+                    avatar_url: uploadAvatarResult.data,
+                    cover_url: userStore.userInfo.cover_url,
+                    age:    userStore.userInfo.age,
+                    gender: userStore.userInfo.gender,
+                    birthday: userStore.userInfo.birthday,
+                    email: userStore.userInfo.email,
+                    description: userStore.userInfo.description
+                }
+ 
+                const updateUserInfoResult = await updateUserInfo(userStore.userId!, updatedUserInfo)
+                if (updateUserInfoResult.code === 0) {
+                    userStore.setUserInfo(updatedUserInfo)
+                    alert('头像上传成功');
+                } else {
+                    alert(updateUserInfoResult.message || '更新失败，请稍后重试')     
+                }
             } else {
-                alert(response.message || '头像上传失败');
+                alert(uploadAvatarResult.message || '头像上传失败');
             }
         } catch (error) {
             console.error('上传头像时发生错误', error);
@@ -253,12 +270,28 @@ const handleCoverPhotoUpload = async (event: Event) => {
         }
 
         try {
-            const response = await uploadCover(userStore.userId!, file);
-            if (response.code === 0) {
-                coverPhotoUrl.value = response.data.coverURL;
-                alert('封面上传成功');
+            const uploadCoverResult = await uploadCover(userStore.userId!, file);
+            if (uploadCoverResult.code === 0) {
+                // 更新用户信息
+                const updatedUserInfo: UserInfo = {
+                    id: userStore.userId,
+                    avatar_url: userStore.userInfo.avatar_url,
+                    cover_url: uploadCoverResult.data,
+                    age: userStore.userInfo.age,
+                    gender: userStore.userInfo.gender,
+                    birthday: userStore.userInfo.birthday,
+                    email: userStore.userInfo.email,
+                    description: userStore.userInfo.description
+                }
+                const updateUserInfoResult = await updateUserInfo(userStore.userId!, updatedUserInfo)
+                if (updateUserInfoResult.code === 0) {
+                    userStore.setUserInfo(updatedUserInfo)
+                    alert('封面上传成功');
+                } else {
+                    alert(updateUserInfoResult.message || '更新失败，请稍后重试')   
+                }
             } else {
-                alert(response.message || '封面上传失败');
+                alert(uploadCoverResult.message || '封面上传失败');
             }
         } catch (error) {
             console.error('上传封面时发生错误', error);
@@ -269,7 +302,7 @@ const handleCoverPhotoUpload = async (event: Event) => {
 
 const handleSaveUserInfo = async () => {
     const updatedUserInfo: UserInfo = {
-        id: userStore.userId || 0,
+        id: userStore.userId || -1,
         avatar_url: avatarPhotoUrl.value,
         cover_url: coverPhotoUrl.value,
         age: Number(age.value) || 0,

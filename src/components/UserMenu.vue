@@ -5,8 +5,8 @@
         class="relative flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
         <span class="absolute -inset-1.5" />
         <span class="sr-only">打开用户菜单</span>
-        <div v-if="userStore.userInfo.avatar_url !== ''">
-           <img :src="userStore.userInfo.avatar_url" alt="用户头像" class="h-8 w-8 rounded-full object-cover" />
+        <div v-if="userStore.userInfo.avatar_url !== '' && userStore.userInfo.avatar_url !== null && userStore.userInfo.avatar_url !== undefined">
+           <img :src="userStore.userInfo.avatar_url" alt="用户头像" class="h-8 w-8 rounded-full object-cover" /> 
         </div>
         <UserCircleIcon v-else class="h-8 w-8 text-gray-300" aria-hidden="true" />
       </MenuButton>

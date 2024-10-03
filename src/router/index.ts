@@ -25,6 +25,32 @@ const router = createRouter({
                     component: () => import('../views/Singer.vue'),
                 },
                 {
+                    path: 'singer-detail/:id',
+                    component: () => import('../views/SingerDetail.vue'),
+                    children: [
+                        {
+                            path: '',
+                            redirect: to => `/singer-detail/${to.params.id}/for-you`
+                        },
+                        {
+                            path: 'for-you',
+                            component: () => import('../views/SingerForYou.vue'),
+                        },
+                        {
+                            path: 'songs',
+                            component: () => import('../views/SingerSongs.vue'),
+                        },
+                        {
+                            path: 'albums',
+                            component: () => import('../views/SingerAlbums.vue'),
+                        },
+                        {
+                            path: 'mv',
+                            component: () => import('../views/SingerMV.vue'),
+                        },
+                    ],
+                },
+                {
                     path: 'playlist-search',
                     component: () => import('../views/Playlist.vue'),
                 },
@@ -78,6 +104,14 @@ const router = createRouter({
             path: '/test',
             component: () => import('../components/Test.vue'),
         },
+        {
+            path: '/error/:errorCode',
+            component: () => import('../views/Error.vue'),
+        },
+        {
+            path: '/contact',
+            component: () => import('../views/Contact.vue'),
+        }
     ],
 });
 

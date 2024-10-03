@@ -1,25 +1,13 @@
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
-import { UserInfo } from '../types/global'
+import { DefaultUserInfo, UserInfo } from '../types/global'
 
 
 export const useUserStore = defineStore('user', () => {
     const userId = ref<number >(-1)
     const username = ref<string >('')
 
-    const defaultUserInfo: UserInfo = {
-        id: -1,
-        avatar_url: '',
-        cover_url: '',
-        age: 0,
-        gender: '',
-        birthday: '',
-        email: '',
-        description: ''
-    }
-    
-    const userInfo = ref<UserInfo>(defaultUserInfo)
-
+    const userInfo = ref<UserInfo>(DefaultUserInfo)
 
     const isLoggedIn = computed(() => userId.value !== -1)
 
@@ -30,7 +18,7 @@ export const useUserStore = defineStore('user', () => {
         // 重置用户状态
         userId.value = -1;
         username.value = '';
-        userInfo.value = defaultUserInfo;
+        userInfo.value = DefaultUserInfo;
     }
 
     function setUserId(id: number) {
@@ -42,7 +30,14 @@ export const useUserStore = defineStore('user', () => {
     }
 
     function setUserInfo(info: UserInfo) {
-        userInfo.value = info
+        userInfo.value.id = info.id
+        userInfo.value.avatar_url = info.avatar_url
+        userInfo.value.cover_url = info.cover_url
+        userInfo.value.age = info.age
+        userInfo.value.gender = info.gender
+        userInfo.value.birthday = info.birthday
+        userInfo.value.email = info.email
+        userInfo.value.description = info.description
     }
 
 
@@ -53,7 +48,7 @@ export const useUserStore = defineStore('user', () => {
 
         userId.value = storedUserId ? parseInt(storedUserId, 10) : -1
         username.value = storedUserName ? storedUserName : ''
-        userInfo.value = storedUserInfo ? JSON.parse(storedUserInfo) : defaultUserInfo
+        userInfo.value = storedUserInfo ? JSON.parse(storedUserInfo) : DefaultUserInfo
     }
 
     watch(userId, (newUserId) => {
