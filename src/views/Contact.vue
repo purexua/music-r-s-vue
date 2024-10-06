@@ -25,7 +25,7 @@
     </div>
   </template>
   
-  <script setup>
+  <script setup lang="ts" name="Contact">
   import { BugAntIcon, ChatBubbleLeftRightIcon, ComputerDesktopIcon } from '@heroicons/vue/24/outline'
 
   const supportItems = [

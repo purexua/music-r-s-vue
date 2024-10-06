@@ -17,12 +17,21 @@ const router = createRouter({
                     component: () => import('../views/TopList.vue'),
                 },
                 {
-                    path: 'music-search',
-                    component: () => import('../views/MusicSearch.vue'),
+                    path: 'album-search',
+                    component: () => import('../views/AlbumSearch.vue'),
                 },
                 {
                     path: 'singer-search',
                     component: () => import('../views/Singer.vue'),
+                },
+                {
+                    path: '/music/:music_id',
+                    name: 'MusicPlayer',
+                    component: () => import('../views/MusicPlayerPage.vue')
+                },
+                {
+                    path: '/album/:id',
+                    component: () => import('../views/AlbumDetail.vue'),
                 },
                 {
                     path: 'singer-detail/:id',
@@ -37,8 +46,8 @@ const router = createRouter({
                             component: () => import('../views/SingerForYou.vue'),
                         },
                         {
-                            path: 'songs',
-                            component: () => import('../views/SingerSongs.vue'),
+                            path: 'music',
+                            component: () => import('../views/SingerMusic.vue'),
                         },
                         {
                             path: 'albums',

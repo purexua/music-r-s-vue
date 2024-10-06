@@ -100,7 +100,7 @@
     </div>
   </div>
 
-  <div>
+  <div class="sm:mx-auto min-[1024px]:mx-32">
     <RouterView />
   </div>
 </template>
@@ -123,7 +123,7 @@ const isFollowing = ref(false);
 
 const tabs: NavigationItem[] = [
   { index: 0, name: '精选', href: 'for-you', icon: HeartIcon, title: 'For You' },
-  { index: 1, name: '歌曲', href: 'songs', icon: MusicalNoteIcon, title: 'Songs' },
+  { index: 1, name: '歌曲', href: 'music', icon: MusicalNoteIcon, title: 'Songs' },
   { index: 2, name: '专辑', href: 'albums', icon: RectangleStackIcon, title: 'Albums' },
   { index: 3, name: 'MV', href: 'mv', icon: VideoCameraIcon, title: 'MV' },
 ];
@@ -136,10 +136,12 @@ const toggleFollow = async (newValue: boolean) => {
     if (newValue) {
       // 关注歌手
       await followSinger(userId, singerId);
+      singerInfo.value.followers_count++;
       console.log('关注歌手成功');
     } else {
       // 取消关注歌手
       await unfollowSinger(userId, singerId);
+      singerInfo.value.followers_count--;
       console.log('取消关注歌手成功');
     }
     isFollowing.value = newValue;

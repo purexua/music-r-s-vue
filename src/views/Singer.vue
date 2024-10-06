@@ -40,57 +40,67 @@
                     </nav>
                 </div>
             </div>
+            <template v-if="totalCount > 0">
+                <ul role="list"
+                    class="mx-auto my-8 grid max-w-7xl grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:gap-8">
+                    <li v-for="singer in singerList" :key="singer.id"
+                        class="rounded-2xl bg-gray-100 px-6 py-8 cursor-pointer"
+                        @click="navigateToSingerDetail(singer.id)">
+                        <img class="mx-auto h-48 w-48 rounded-full md:h-56 md:w-56" :src="singer.avatar_url"
+                            :alt="singer.name" />
+                        <h3 class="mt-6 text-xl font-bold leading-tight tracking-tight text-gray-900 text-center">
+                            {{ singer.name }}
+                        </h3>
+                        <p class="mt-2 text-base leading-relaxed text-gray-600 text-center">
+                            {{ singer.main_genre }}
+                        </p>
+                    </li>
+                </ul>
 
-            <ul role="list"
-                class="mx-auto my-8 grid max-w-7xl grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:gap-8">
-                <li v-for="singer in singerList" :key="singer.id"
-                    class="rounded-2xl bg-gray-100 px-6 py-8 cursor-pointer" @click="navigateToSingerDetail(singer.id)">
-                    <img class="mx-auto h-48 w-48 rounded-full md:h-56 md:w-56" :src="singer.avatar_url"
-                        :alt="singer.name" />
-                    <h3 class="mt-6 text-xl font-bold leading-tight tracking-tight text-gray-900 text-center">
-                        {{ singer.name }}
-                    </h3>
-                    <p class="mt-2 text-base leading-relaxed text-gray-600 text-center">
-                        {{ singer.main_genre }}
-                    </p>
-                </li>
-            </ul>
-
-            <!-- 分页控件 -->
-            <div class="mt-12 mx-12">
-                <nav class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0">
-                    <div class="-mt-px flex w-0 flex-1">
-                        <a href="#" @click.prevent="prevPage"
-                            class="inline-flex items-center border-t-2 border-transparent pr-1 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">
-                            <ArrowLongLeftIcon class="mr-3 h-5 w-5 text-gray-400" aria-hidden="true" />
-                            上一页
-                        </a>
-                    </div>
-                    <div class="hidden md:-mt-px md:flex">
-                        <span
-                            class="inline-flex items-center border-t-2 border-gray-500 px-4 pt-4 text-sm font-medium text-gray-500">
-                            {{ currentPage }}
-                        </span>
-                    </div>
-                    <div class="-mt-px flex w-0 flex-1 justify-end">
-                        <a href="#" @click.prevent="nextPage"
-                            class="inline-flex items-center border-t-2 border-transparent pl-1 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">
-                            下一页
-                            <ArrowLongRightIcon class="ml-3 h-5 w-5 text-gray-400" aria-hidden="true" />
-                        </a>
-                    </div>
-                </nav>
-            </div>
+                <!-- 修改分页控件 -->
+                <div class="mt-12 mx-12">
+                    <nav class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0">
+                        <div class="-mt-px flex w-0 flex-1">
+                            <a href="#" @click.prevent="prevPage" :class="{'pointer-events-none opacity-50': currentPage === 1}"
+                                class="inline-flex items-center border-t-2 border-transparent pr-1 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">
+                                <ArrowLongLeftIcon class="mr-3 h-5 w-5 text-gray-400" aria-hidden="true" />
+                                上一页
+                            </a>
+                        </div>
+                        <div class="hidden md:-mt-px md:flex">
+                            <span
+                                class="inline-flex items-center border-t-2 border-gray-500 px-4 pt-4 text-sm font-medium text-gray-500">
+                                {{ currentPage }}
+                            </span>
+                        </div>
+                        <div class="-mt-px flex w-0 flex-1 justify-end">
+                            <a href="#" @click.prevent="nextPage" :class="{'pointer-events-none opacity-50': !hasNextPage}"
+                                class="inline-flex items-center border-t-2 border-transparent pl-1 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">
+                                下一页
+                                <ArrowLongRightIcon class="ml-3 h-5 w-5 text-gray-400" aria-hidden="true" />
+                            </a>
+                        </div>
+                    </nav>
+                </div>
+            </template>
+            <template v-else>
+                <div class="flex flex-col items-center justify-center h-64 bg-white rounded-lg my-8">
+                    <UserGroupIcon class="w-16 h-16 text-gray-400 mb-4" />
+                    <p class="text-xl font-semibold text-gray-700">暂无符合条件的歌手</p>
+                    <p class="text-sm text-gray-500 mt-2">换个条件试试吧</p>
+                </div>
+            </template>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { ArrowLongLeftIcon, ArrowLongRightIcon } from '@heroicons/vue/20/solid';
 import { getSingerSimpleInfoListByCountryAndGender } from '../api/httpClient';
 import { SingerSimpleInfo } from '../types/global';
 import { useRouter } from 'vue-router';
+import { UserGroupIcon } from '@heroicons/vue/24/outline'
 
 const router = useRouter();
 
@@ -99,7 +109,7 @@ const currentPage = ref(1);
 const pageSize = ref(8);
 const country = ref('');
 const gender = ref('');
-
+const totalCount = ref(0);
 const countryOptions = [
     { name: '全部', value: '' },
     { name: '内地', value: 'china' },
@@ -115,11 +125,14 @@ const genderOptions = [
     { name: '女', value: 'female' },
 ];
 
+// 添加计算属性
+const hasNextPage = computed(() => {
+    return totalCount.value > currentPage.value * pageSize.value;
+});
 
 const navigateToSingerDetail = (singerId: number) => {
     router.push(`/singer-detail/${singerId}`);
 };
-
 
 const fetchSingers = async () => {
     try {
@@ -130,7 +143,10 @@ const fetchSingers = async () => {
             pageSize.value
         );
         if (response.code === 0) {
-            singerList.value = response.data.singer_list;
+            if (response.data.count > 0) {
+                singerList.value = response.data.singer_simple_info_list;
+            }
+            totalCount.value = response.data.count;
         } else {
             console.error('获取歌手列表失败:', response.msg);
         }
@@ -151,6 +167,7 @@ const selectGender = (value: string) => {
     fetchSingers();
 };
 
+// 修改 prevPage 和 nextPage 函数
 const prevPage = () => {
     if (currentPage.value > 1) {
         currentPage.value--;
@@ -159,8 +176,10 @@ const prevPage = () => {
 };
 
 const nextPage = () => {
-    currentPage.value++;
-    fetchSingers();
+    if (hasNextPage.value) {
+        currentPage.value++;
+        fetchSingers();
+    }
 };
 
 onMounted(() => {

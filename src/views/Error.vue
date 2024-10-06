@@ -17,7 +17,7 @@
     </main>
 </template>
 
-<script setup>
+<script setup lang="ts" name="Error">
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -29,7 +29,7 @@ const errorDescription = ref('Sorry, we couldn\'t find the page you\'re looking 
 onMounted(() => {
     // 根据路由参数设置错误信息
     if (route.params.errorCode) {
-        errorCode.value = route.params.errorCode;
+        errorCode.value = route.params.errorCode as string;
         switch (errorCode.value) {
             case '403':
                 errorMessage.value = 'Access Denied';

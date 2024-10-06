@@ -270,7 +270,7 @@ export async function isFollowingSinger(userId: number, singerId: number) {
 // 关注歌手
 export async function followSinger(userId: number, singerId: number) {
     try {
-        const response = await userClient.post(`/users/${userId}/follow`, null, { 
+        const response = await userClient.post(`/users/${userId}/follow`, null, {
             params: {
                 singer_id: singerId
             }
@@ -305,3 +305,84 @@ export async function unfollowSinger(userId: number, singerId: number) {
 
 // ... 其他接口方法 ...
 
+// 获取音乐信息
+export async function getMusicById(id: number) {
+    try {
+        const response = await userClient.get(`/music/${id}`);
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取音乐信息失败');
+        }
+    } catch (error) {
+        console.error('获取音乐信息失败', error);
+        throw error;
+    }
+}
+
+// 获取专辑信息
+export async function getAlbumById(id: number) {
+    try {
+        const response = await userClient.get(`/albums/${id}`);
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取专辑信息失败');
+        }
+    } catch (error) {
+        console.error('获取专辑信息失败', error);
+        throw error;
+    }
+}
+
+// 获取歌手的音乐卡片信息
+export async function getMusicCardInfoBySingerId(id: number, limit: number, offset: number) {
+    try {
+        const response = await userClient.get(`/music/singer/${id}`, {
+            params: { limit, offset }
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取歌手音乐卡片信息失败');
+        }
+    } catch (error) {
+        console.error('获取歌手音乐卡片信息失败', error);
+        throw error;
+    }
+}
+
+// 获取歌手的专辑信息
+export async function getAlbumInfoBySingerId(id: number, limit: number, offset: number) {
+    try {
+        const response = await userClient.get(`/albums/singer/${id}`, {
+            params: { limit, offset }
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取歌手专辑信息失败');
+        }
+    } catch (error) {
+        console.error('获取歌手专辑信息失败', error);
+        throw error;
+    }
+}
+
+
+// 获取专辑的音乐卡片信息
+export async function getMusicCardInfoByAlbumId(id: number, limit: number, offset: number) {
+    try {
+        const response = await userClient.get(`/music/album/${id}`, {
+            params: { limit, offset }
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取专辑音乐卡片信息失败');
+        }
+    } catch (error) {
+        console.error('获取专辑音乐卡片信息失败', error);
+        throw error;
+    }
+}

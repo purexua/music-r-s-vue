@@ -40,7 +40,7 @@ onMounted(async () => {
 const navigation: NavigationItem[] = [
     { index: 0, name: '推荐', href: '/feed', title: 'For You' },
     { index: 1, name: '巅峰榜', href: '/top-list', title: 'Top List' },
-    { index: 2, name: '音乐', href: '/music-search', title: 'Music' },
+    { index: 2, name: '专辑', href: '/album-search', title: 'Album' },  
     { index: 3, name: '歌手', href: '/singer-search', title: 'Singer' },
     { index: 4, name: '歌单', href: '/playlist-search', title: 'Playlist' },
 ]

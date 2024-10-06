@@ -1,10 +1,10 @@
 <template>
     <div>
-        <h1>Singer Songs</h1>
+        <h1>Album Search</h1>
     </div>
 </template>
 
-<script setup lang="ts" name="SingerSongs">
+<script setup lang="ts" name="AlbumSearch">
 
 </script>
 
