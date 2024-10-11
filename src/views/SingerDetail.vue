@@ -15,13 +15,23 @@
             <div class="flex items-center">
               <span class="mr-2 text-sm text-gray-600">{{ isFollowing ? '已关注' : '关注' }}</span>
               <Switch v-model="isFollowing"
-                :class="[isFollowing ? 'bg-gray-600' : 'bg-gray-200', 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2']"
+                :class="[
+                  isFollowing ? 'bg-gray-600' : 'bg-gray-200',
+                  'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out',
+                  'hover:ring-2 hover:ring-gray-600 hover:ring-offset-2 hover:shadow-md hover:scale-105 transform transition-all'
+                ]"
                 @update:modelValue="toggleFollow">
                 <span class="sr-only">关注歌手</span>
                 <span
-                  :class="[isFollowing ? 'translate-x-5' : 'translate-x-0', 'pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out']">
+                  :class="[
+                    isFollowing ? 'translate-x-5' : 'translate-x-0',
+                    'pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
+                  ]">
                   <span
-                    :class="[isFollowing ? 'opacity-0 duration-100 ease-out' : 'opacity-100 duration-200 ease-in', 'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity']"
+                    :class="[
+                      isFollowing ? 'opacity-0 duration-100 ease-out' : 'opacity-100 duration-200 ease-in',
+                      'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity'
+                    ]"
                     aria-hidden="true">
                     <svg class="h-3 w-3 text-gray-400" fill="none" viewBox="0 0 12 12">
                       <path d="M4 8l2-2m0 0l2-2M6 6L4 4m2 2l2 2" stroke="currentColor" stroke-width="2"
@@ -29,7 +39,10 @@
                     </svg>
                   </span>
                   <span
-                    :class="[isFollowing ? 'opacity-100 duration-200 ease-in' : 'opacity-0 duration-100 ease-out', 'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity']"
+                    :class="[
+                      isFollowing ? 'opacity-100 duration-200 ease-in' : 'opacity-0 duration-100 ease-out',
+                      'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity'
+                    ]"
                     aria-hidden="true">
                     <svg class="h-3 w-3 text-gray-600" fill="currentColor" viewBox="0 0 12 12">
                       <path
@@ -110,7 +123,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { HeartIcon, MusicalNoteIcon, RectangleStackIcon, VideoCameraIcon } from '@heroicons/vue/20/solid';
 import { Switch } from '@headlessui/vue';
 import { NavigationItem, SingerInfo, DefaultSingerInfo } from '../types/global';
-import { getSingerInfo, isFollowingSinger, followSinger, unfollowSinger } from '../api/httpClient';
+import { getSingerInfo, checkUserFollowingSinger, followSinger, unfollowSinger } from '../api/httpClient';
 import { useUserStore } from '../store/user';
 
 const userStore = useUserStore();
@@ -184,7 +197,7 @@ const formatNumber = (num: number | undefined) => {
 const checkFollowStatus = async (id: number) => {
   const userId = userStore.userId;
   try {
-    const response = await isFollowingSinger(userId, id);
+    const response = await checkUserFollowingSinger(userId, id);
     if (response.code === 0) {
       isFollowing.value = response.data;
     } else {

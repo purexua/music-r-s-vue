@@ -53,11 +53,11 @@ const notificationNavigation: NavigationItem[] = [
 ]
 
 const userNavigation: NavigationItem[][] = [
-    [{ index: 0, name: '我的主页', href: '/about-me', title: 'My Profile' }],
+    [{ index: 0, name: '我的主页', href: '/about-me/my-like/music', title: 'My Profile' }],
     [
-        { index: 1, name: '我喜欢', href: '/my-like', title: 'My Like' },
-        { index: 2, name: '我的歌单', href: '/my-playlist', title: 'My Playlist' },
-        { index: 3, name: '设置', href: '/settings', title: 'Settings' },
+        { index: 1, name: '我喜欢', href: '/about-me/my-like/music', title: 'My Like' },
+        { index: 2, name: '我的歌单', href: '/about-me/my-playlist', title: 'My Playlist' },
+        { index: 3, name: '设置', href: '/about-me/settings', title: 'Settings' },
 
     ],
     [

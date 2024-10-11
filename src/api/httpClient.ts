@@ -12,9 +12,8 @@ const userClient = axios.create({
 // 请求拦截器：添加 Authorization 头
 userClient.interceptors.request.use(
     config => {
-        const token = localStorage.getItem('token'); // 获取 token
+        const token = localStorage.getItem('token');
         if (token) {
-            // 如果 token 存在，将其放入请求头的 Authorization 中
             config.headers['Authorization'] = `${token}`;
         }
         return config;
@@ -27,52 +26,44 @@ userClient.interceptors.request.use(
 // 响应拦截器：处理 401 错误并刷新 token
 userClient.interceptors.response.use(
     response => {
-        return response; // 正常返回响应
+        return response;
     },
     async error => {
-        const originalRequest = error.config; // 保存原始请求
+        const originalRequest = error.config;
         if (error.response && error.response.status === 401 && !originalRequest._retry) {
-            // 如果请求返回 401 Unauthorized 且还未进行重试
-            originalRequest._retry = true; // 标记请求为已重试
-
-            // 获取用户 ID 和 refresh_token
+            originalRequest._retry = true;
             const userId = localStorage.getItem('user_id');
             try {
-                const refreshResponse = await refreshToken(Number(userId)); // 调用刷新 token 的方法
-
+                const refreshResponse = await refreshToken(Number(userId));
                 if (refreshResponse.status === 200 && refreshResponse.data.code === 0) {
-                    // 如果刷新 token 成功
-                    const newToken = refreshResponse.data.data; // 新的 access token
-                    localStorage.setItem('token', newToken); // 更新本地存储的 access token
-                    originalRequest.headers['Authorization'] = `${newToken}`; // 更新原始请求的 Authorization 头
-
-                    return userClient(originalRequest); // 重新发送原始请求
+                    const newToken = refreshResponse.data.data;
+                    localStorage.setItem('token', newToken);
+                    originalRequest.headers['Authorization'] = `${newToken}`;
+                    return userClient(originalRequest);
                 }
             } catch (refreshError) {
-                // 处理刷新 token 失败的情况
                 console.error('刷新 token 失败', refreshError);
                 return Promise.reject(refreshError);
             }
         }
-        return Promise.reject(error); // 处理其他错误
+        return Promise.reject(error);
     }
 );
 
-// 登录响应接口
+// 接口定义
 export interface LoginResponse {
     user_id: number;
     token: string;
     refresh_token: string;
 }
 
-// 注册响应接口
 export interface RegisterResponse {
     user_id: number;
     token: string;
     refresh_token: string;
 }
 
-// 新增函数：保存用户信息到本地存储
+// 辅助函数
 function saveUserTokenToLocalStorage(userData: LoginResponse | RegisterResponse) {
     const { user_id, token, refresh_token } = userData;
     localStorage.setItem('user_id', user_id.toString());
@@ -80,14 +71,16 @@ function saveUserTokenToLocalStorage(userData: LoginResponse | RegisterResponse)
     localStorage.setItem('refresh_token', refresh_token);
 }
 
-// 登录请求
-// export async function login(username: string, password: string, captchaVerifyParam: string) {
+// API 函数
+
+/**
+ * 用户登录
+ * @param username 用户名
+ * @param password 密码
+ */
 export async function login(username: string, password: string) {
     try {
-        const response = await userClient.post('/auth', {
-            username, password,
-            // captcha_verify_param: captchaVerifyParam
-        });
+        const response = await userClient.post('/auth', { username, password });
         if (response.data.code === 0) {
             saveUserTokenToLocalStorage(response.data.data);
         }
@@ -98,7 +91,11 @@ export async function login(username: string, password: string) {
     }
 }
 
-// 注册请求
+/**
+ * 用户注册
+ * @param username 用户名
+ * @param password 密码
+ */
 export async function register(username: string, password: string) {
     try {
         const response = await userClient.post('/users', { username, password });
@@ -112,11 +109,13 @@ export async function register(username: string, password: string) {
     }
 }
 
-// 刷新 token 请求
+/**
+ * 刷新 token
+ * @param userId 用户ID
+ */
 async function refreshToken(userId: number) {
-    const refresh_token = localStorage.getItem('refresh_token'); // 从本地存储获取 refresh_token
+    const refresh_token = localStorage.getItem('refresh_token');
     try {
-        // 调用后端刷新 token 接口，并在请求头中添加 refresh_token
         return await userClient.get(`/auth/refresh/${userId}`, {
             headers: { 'RefreshToken': refresh_token }
         });
@@ -126,10 +125,13 @@ async function refreshToken(userId: number) {
     }
 }
 
-// 获取用户信息请求
+/**
+ * 获取用户信息
+ * @param id 用户ID
+ */
 export async function getUserInfo(id: number) {
     try {
-        const response = await userClient.get(`/users/${id}/info`);
+        const response = await userClient.get(`/users/${id}`);
         if (response.data.code === 0) {
             return response.data;
         } else {
@@ -141,8 +143,13 @@ export async function getUserInfo(id: number) {
     }
 }
 
-// 修改密码请求 传 id 和 新旧密码
-export async function changePassword(id: number, oldPassword: string, newPassword: string) {
+/**
+ * 修改用户密码
+ * @param id 用户ID
+ * @param oldPassword 旧密码
+ * @param newPassword 新密码
+ */
+export async function changeUserPassword(id: number, oldPassword: string, newPassword: string) {
     try {
         const response = await userClient.put(`/users/${id}/password`, { old_password: oldPassword, new_password: newPassword });
         if (response.data.code === 0) {
@@ -156,10 +163,14 @@ export async function changePassword(id: number, oldPassword: string, newPasswor
     }
 }
 
-// 更新用户信息请求
+/**
+ * 更新用户信息
+ * @param id 用户ID
+ * @param userInfo 用户信息
+ */
 export async function updateUserInfo(id: number, userInfo: any) {
     try {
-        const response = await userClient.put(`/users/${id}/info`, userInfo);
+        const response = await userClient.put(`/users/${id}`, userInfo);
         if (response.data.code === 0) {
             return response.data;
         } else {
@@ -171,19 +182,18 @@ export async function updateUserInfo(id: number, userInfo: any) {
     }
 }
 
-
-// 上传头像请求
-export async function uploadAvatar(id: number, file: File) {
+/**
+ * 上传用户头像
+ * @param id 用户ID
+ * @param file 头像文件
+ */
+export async function uploadUserAvatar(id: number, file: File) {
     try {
         const formData = new FormData();
         formData.append('file', file);
-
         const response = await userClient.post(`/users/${id}/avatar`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
+            headers: { 'Content-Type': 'multipart/form-data' }
         });
-
         if (response.data.code === 0) {
             return response.data;
         } else {
@@ -195,18 +205,18 @@ export async function uploadAvatar(id: number, file: File) {
     }
 }
 
-// 上传封面请求
-export async function uploadCover(id: number, file: File) {
+/**
+ * 上传用户封面
+ * @param id 用户ID
+ * @param file 封面文件
+ */
+export async function uploadUserCover(id: number, file: File) {
     try {
         const formData = new FormData();
         formData.append('file', file);
-
         const response = await userClient.post(`/users/${id}/cover`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
+            headers: { 'Content-Type': 'multipart/form-data' }
         });
-
         if (response.data.code === 0) {
             return response.data;
         } else {
@@ -218,14 +228,18 @@ export async function uploadCover(id: number, file: File) {
     }
 }
 
-// 获取歌手列表请求
-
-export async function getSingerSimpleInfoListByCountryAndGender(country: string, gender: string, pageNum: number, pageSize: number) {
+/**
+ * 获取歌手简单信息列表
+ * @param country 国家
+ * @param gender 性别
+ * @param offset 偏移量
+ * @param limit 每页数量
+ */
+export async function getSingerInfoListByCountryAndGender(country: string, gender: string, offset: number, limit: number) {
     try {
-        const response = await userClient.get(`/singers/info`, {
-            params: { country, gender, pageNum, pageSize }
+        const response = await userClient.get(`/singers`, {
+            params: { country, gender, offset, limit }
         });
-
         if (response.data.code === 0) {
             return response.data;
         } else {
@@ -237,10 +251,67 @@ export async function getSingerSimpleInfoListByCountryAndGender(country: string,
     }
 }
 
-// 获取歌手详细信息
+/**
+ * 根据ID列表获取歌手简单信息
+ * @param idList 歌手ID列表
+ */
+export async function getSingerInfoByIdList(idList: number[]) {
+    try {
+        const response = await userClient.post(`/singers`, { ids: idList });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取歌手简单信息列表失败');
+        }
+    } catch (error) {
+        console.error('获取歌手简单信息列表失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 根据ID列表获取音乐卡片信息
+ * @param idList 音乐ID列表
+ */
+export async function getMusicCardInfoByIdList(idList: number[]) {
+    try {
+        const response = await userClient.post(`/music-card`, { ids: idList });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取音乐卡片信息列表失败');
+        }
+    } catch (error) {
+        console.error('获取音乐卡片信息列表失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 根据ID列表获取专辑信息
+ * @param idList 专辑ID列表
+ */
+export async function getAlbumInfoByIdList(idList: number[]) {
+    try {
+        const response = await userClient.post(`/albums`, { ids: idList });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取专辑信息列表失败');
+        }
+    } catch (error) {
+        console.error('获取专辑信息列表失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 获取歌手详细信息
+ * @param id 歌手ID
+ */
 export async function getSingerInfo(id: number) {
     try {
-        const response = await userClient.get(`/singers/${id}/info`);
+        const response = await userClient.get(`/singers/${id}`);
         if (response.data.code === 0) {
             return response.data;
         } else {
@@ -252,14 +323,14 @@ export async function getSingerInfo(id: number) {
     }
 }
 
-// 用户是否关注歌手
-export async function isFollowingSinger(userId: number, singerId: number) {
+/**
+ * 检查用户是否关注歌手
+ * @param userId 用户ID
+ * @param singerId 歌手ID
+ */
+export async function checkUserFollowingSinger(userId: number, singerId: number) {
     try {
-        const response = await userClient.get(`/users/${userId}/follow`, {
-            params: {
-                singer_id: singerId
-            }
-        });
+        const response = await userClient.get(`/users/${userId}/singers/${singerId}`);
         return response.data;
     } catch (error) {
         console.error('检查用户是否关注歌手失败', error);
@@ -267,14 +338,14 @@ export async function isFollowingSinger(userId: number, singerId: number) {
     }
 }
 
-// 关注歌手
+/**
+ * 关注歌手
+ * @param userId 用户ID
+ * @param singerId 歌手ID
+ */
 export async function followSinger(userId: number, singerId: number) {
     try {
-        const response = await userClient.post(`/users/${userId}/follow`, null, {
-            params: {
-                singer_id: singerId
-            }
-        });
+        const response = await userClient.post(`/users/${userId}/singers/${singerId}`);
         if (response.data.code === 0) {
             return response.data;
         } else {
@@ -286,12 +357,14 @@ export async function followSinger(userId: number, singerId: number) {
     }
 }
 
-// 取消关注歌手
+/**
+ * 取消关注歌手
+ * @param userId 用户ID
+ * @param singerId 歌手ID
+ */
 export async function unfollowSinger(userId: number, singerId: number) {
     try {
-        const response = await userClient.delete(`/users/${userId}/follow`, {
-            params: { singer_id: singerId }
-        });
+        const response = await userClient.delete(`/users/${userId}/singers/${singerId}`);
         if (response.data.code === 0) {
             return response.data;
         } else {
@@ -303,12 +376,13 @@ export async function unfollowSinger(userId: number, singerId: number) {
     }
 }
 
-// ... 其他接口方法 ...
-
-// 获取音乐信息
+/**
+ * 获取音乐信息
+ * @param id 音乐ID
+ */
 export async function getMusicById(id: number) {
     try {
-        const response = await userClient.get(`/music/${id}`);
+        const response = await userClient.get(`/musics/${id}`);
         if (response.data.code === 0) {
             return response.data;
         } else {
@@ -320,7 +394,10 @@ export async function getMusicById(id: number) {
     }
 }
 
-// 获取专辑信息
+/**
+ * 获取专辑信息
+ * @param id 专辑ID
+ */
 export async function getAlbumById(id: number) {
     try {
         const response = await userClient.get(`/albums/${id}`);
@@ -335,10 +412,15 @@ export async function getAlbumById(id: number) {
     }
 }
 
-// 获取歌手的音乐卡片信息
-export async function getMusicCardInfoBySingerId(id: number, limit: number, offset: number) {
+/**
+ * 获取歌手的音乐卡片信息
+ * @param id 歌手ID
+ * @param limit 限制数量
+ * @param offset 偏移量
+ */
+export async function getSingerMusicCardInfoById(id: number, limit: number, offset: number) {
     try {
-        const response = await userClient.get(`/music/singer/${id}`, {
+        const response = await userClient.get(`/singers/${id}/music-card`, {
             params: { limit, offset }
         });
         if (response.data.code === 0) {
@@ -352,10 +434,15 @@ export async function getMusicCardInfoBySingerId(id: number, limit: number, offs
     }
 }
 
-// 获取歌手的专辑信息
-export async function getAlbumInfoBySingerId(id: number, limit: number, offset: number) {
+/**
+ * 获取歌手的专辑信息
+ * @param id 歌手ID
+ * @param limit 限制数量
+ * @param offset 偏移量
+ */
+export async function getSingerAlbumInfoById(id: number, limit: number, offset: number) {
     try {
-        const response = await userClient.get(`/albums/singer/${id}`, {
+        const response = await userClient.get(`/singers/${id}/albums`, {
             params: { limit, offset }
         });
         if (response.data.code === 0) {
@@ -369,11 +456,15 @@ export async function getAlbumInfoBySingerId(id: number, limit: number, offset: 
     }
 }
 
-
-// 获取专辑的音乐卡片信息
-export async function getMusicCardInfoByAlbumId(id: number, limit: number, offset: number) {
+/**
+ * 获取专辑的音乐卡片信息
+ * @param id 专辑ID
+ * @param limit 限制数量
+ * @param offset 偏移量
+ */
+export async function getAlbumMusicCardInfoById(id: number, limit: number, offset: number) {
     try {
-        const response = await userClient.get(`/music/album/${id}`, {
+        const response = await userClient.get(`/albums/${id}/music-card`, {
             params: { limit, offset }
         });
         if (response.data.code === 0) {
@@ -383,6 +474,180 @@ export async function getMusicCardInfoByAlbumId(id: number, limit: number, offse
         }
     } catch (error) {
         console.error('获取专辑音乐卡片信息失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 检查用户是否收藏音乐
+ * @param userId 用户ID
+ * @param musicId 音乐ID
+ */
+export async function checkUserLikingMusic(userId: number, musicId: number) {
+    try {
+        const response = await userClient.get(`/users/${userId}/musics/${musicId}`);
+        return response.data;
+    } catch (error) {
+        console.error('检查用户是否收藏音乐失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 收藏音乐
+ * @param userId 用户ID
+ * @param musicId 音乐ID
+ */
+export async function likeMusic(userId: number, musicId: number) {
+    try {
+        const response = await userClient.post(`/users/${userId}/musics/${musicId}`);
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '收藏音乐失败');
+        }
+    } catch (error) {
+        console.error('收藏音乐失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 取消收藏音乐
+ * @param userId 用户ID
+ * @param musicId 音乐ID
+ */
+export async function unlikeMusic(userId: number, musicId: number) {
+    try {
+        const response = await userClient.delete(`/users/${userId}/musics/${musicId}`);
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '取消收藏音乐失败');
+        }
+    } catch (error) {
+        console.error('取消收藏音乐失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 检查用户是否收藏专辑
+ * @param userId 用户ID
+ * @param albumId 专辑ID
+ */
+export async function checkUserLikingAlbum(userId: number, albumId: number) {
+    try {
+        const response = await userClient.get(`/users/${userId}/albums/${albumId}`);
+        return response.data;
+    } catch (error) {
+        console.error('检查用户是否收藏专辑失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 音乐播放量增加
+ * @param id 音乐ID
+ */
+export async function increaseMusicPlayCount(id: number) {
+    try {
+        const response = await userClient.post(`/musics/${id}/play`);
+        return response.data;
+    } catch (error) {
+        console.error('音乐播放量增加失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 收藏专辑
+ * @param userId 用户ID
+ * @param albumId 专辑ID
+ */
+export async function likeAlbum(userId: number, albumId: number) {
+    try {
+        const response = await userClient.post(`/users/${userId}/albums/${albumId}`);
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '收藏专辑失败');
+        }
+    } catch (error) {
+        console.error('收藏专辑失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 取消收藏专辑
+ * @param userId 用户ID
+ * @param albumId 专辑ID
+ */
+export async function unlikeAlbum(userId: number, albumId: number) {
+    try {
+        const response = await userClient.delete(`/users/${userId}/albums/${albumId}`);
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '取消收藏专辑失败');
+        }
+    } catch (error) {
+        console.error('取消收藏专辑失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 获取用户关注歌手ID列表
+ * @param userId 用户ID
+ */
+export async function getUserFollowedSingerIdList(userId: number) {
+    try {
+        const response = await userClient.get(`/users/${userId}/singers-id`);
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取用户关注歌手ID列表失败');
+        }
+    } catch (error) {
+        console.error('获取用户关注歌手ID列表失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 获取用户收藏的音乐ID列表
+ * @param userId 用户ID
+ */
+export async function getUserLikedMusicIdList(userId: number) {
+    try {
+        const response = await userClient.get(`/users/${userId}/musics-id`);
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取用户收藏的音乐ID列表失败');
+        }
+    } catch (error) {
+        console.error('获取用户收藏的音乐ID列表失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 获取用户收藏的专辑ID列表
+ * @param userId 用户ID
+ */
+export async function getUserLikedAlbumIdList(userId: number) {
+    try {
+        const response = await userClient.get(`/users/${userId}/albums-id`);
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取用户收藏的专辑ID列表失败');
+        }
+    } catch (error) {
+        console.error('获取用户收藏的专辑ID列表失败', error);
         throw error;
     }
 }

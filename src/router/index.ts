@@ -26,11 +26,10 @@ const router = createRouter({
                 },
                 {
                     path: '/music/:music_id',
-                    name: 'MusicPlayer',
                     component: () => import('../views/MusicPlayerPage.vue')
                 },
                 {
-                    path: '/album/:id',
+                    path: '/album-detail/:id',
                     component: () => import('../views/AlbumDetail.vue'),
                 },
                 {
@@ -78,18 +77,38 @@ const router = createRouter({
                 {
                     path: 'about-me',
                     component: () => import('../views/AboutMe.vue'),
-                },
-                {
-                    path: 'my-like',
-                    component: () => import('../views/MyLike.vue'),
-                },
-                {
-                    path: 'my-playlist',
-                    component: () => import('../views/MyPlaylist.vue'),
-                },
-                {
-                    path: 'settings',
-                    component: () => import('../views/Settings.vue'),
+                    children: [
+                        {
+                            path: 'my-like',
+                            component: () => import('../views/MyLike.vue'),
+                            children: [
+                                {
+                                    path: 'music',
+                                    component: () => import('../views/MyLikeMusic.vue'),
+                                },
+                                {
+                                    path: 'album',
+                                    component: () => import('../views/MyLikeAlbum.vue'),
+                                },
+                                {
+                                    path: 'mv',
+                                    component: () => import('../views/MyLikeMV.vue'),
+                                },
+                            ],
+                        },
+                        {
+                            path: 'my-playlist',
+                            component: () => import('../views/MyPlaylist.vue'),
+                        },
+                        {
+                            path: 'my-follow-singer',
+                            component: () => import('../views/MyLikeSinger.vue'),
+                        },
+                        {
+                            path: 'settings',
+                            component: () => import('../views/Settings.vue'),
+                        },
+                    ],
                 },
                 {
                     path: 'feedback',

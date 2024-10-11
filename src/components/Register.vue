@@ -77,7 +77,6 @@ const handleRegister = async () => {
 
         if (result.code === 0) {
             userStore.setUserId(result.data.user_id)
-            userStore.setUserName(username.value)
             alert('注册成功')
             router.push('/')
         } else {

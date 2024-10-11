@@ -4,8 +4,7 @@ import { DefaultUserInfo, UserInfo } from '../types/global'
 
 
 export const useUserStore = defineStore('user', () => {
-    const userId = ref<number >(-1)
-    const username = ref<string >('')
+    const userId = ref<number>(-1)
 
     const userInfo = ref<UserInfo>(DefaultUserInfo)
 
@@ -17,7 +16,6 @@ export const useUserStore = defineStore('user', () => {
 
         // 重置用户状态
         userId.value = -1;
-        username.value = '';
         userInfo.value = DefaultUserInfo;
     }
 
@@ -25,12 +23,10 @@ export const useUserStore = defineStore('user', () => {
         userId.value = id
     }
 
-    function setUserName(name: string) {
-        username.value = name
-    }
 
     function setUserInfo(info: UserInfo) {
         userInfo.value.id = info.id
+        userInfo.value.username = info.username
         userInfo.value.avatar_url = info.avatar_url
         userInfo.value.cover_url = info.cover_url
         userInfo.value.age = info.age
@@ -43,11 +39,9 @@ export const useUserStore = defineStore('user', () => {
 
     function initializeFromStorage() {
         const storedUserId = localStorage.getItem('user_id')
-        const storedUserName = localStorage.getItem('user_name')
         const storedUserInfo = localStorage.getItem('user_info')
 
         userId.value = storedUserId ? parseInt(storedUserId, 10) : -1
-        username.value = storedUserName ? storedUserName : ''
         userInfo.value = storedUserInfo ? JSON.parse(storedUserInfo) : DefaultUserInfo
     }
 
@@ -56,14 +50,6 @@ export const useUserStore = defineStore('user', () => {
             localStorage.removeItem('user_id')
         } else {
             localStorage.setItem('user_id', newUserId.toString())
-        }
-    })
-
-    watch(username, (newUserName) => {
-        if (newUserName === null) {
-            localStorage.removeItem('user_name')
-        } else {
-            localStorage.setItem('user_name', newUserName)
         }
     })
 
@@ -77,5 +63,5 @@ export const useUserStore = defineStore('user', () => {
 
     initializeFromStorage()
 
-    return { userId, username, userInfo, isLoggedIn, setUserId, setUserName, setUserInfo, logout, initializeFromStorage }
+    return { userId, userInfo, isLoggedIn, setUserId, setUserInfo, logout, initializeFromStorage }
 })

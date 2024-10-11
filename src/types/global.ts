@@ -1,5 +1,6 @@
 export interface UserInfo {
     id: number;
+    username: string;
     avatar_url: string;
     cover_url: string;
     age: number;
@@ -75,6 +76,7 @@ export interface AlbumInfo {
     singer_id: number;
     singer_name: string;
     release_date: string;
+    like_count: number;
     description: string;
 }
 
@@ -88,6 +90,7 @@ export interface NavigationItem {
 
 export const DefaultUserInfo: UserInfo = {
     id: -1,
+    username: '',
     avatar_url: '',
     cover_url: '',
     age: 0,
@@ -134,6 +137,6 @@ export const DefaultAlbumInfo: AlbumInfo = {
     singer_id: -1,
     singer_name: '',
     release_date: '',
+    like_count: 0,
     description: ''
 }
-

@@ -58,8 +58,8 @@
           </div>
           <UserCircleIcon v-else class="h-10 w-10 text-gray-300" aria-hidden="true" />
           <div class="ml-3">
-            <div class="text-base font-medium text-gray-800">{{ userStore.username }}</div>
-            <div class="text-sm font-medium text-gray-500">{{ userStore.userInfo?.email }}</div>
+            <div class="text-base font-medium text-gray-800">{{ userStore.userInfo.username }}</div>
+            <div class="text-sm font-medium text-gray-500">{{ userStore.userInfo.email }}</div>
           </div>
           <NotificationMenu :notificationNavigation="notificationNavigation" className="ml-auto"
             buttonClassName="flex-shrink-0" />

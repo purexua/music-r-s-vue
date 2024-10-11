@@ -1,21 +1,16 @@
 <template>
-    <div class="p-4">
+    <div class="p-4 min-h-screen">
         <template v-if="totalCount > 0">
             <MusicCard :musicList="musicList" />
-            <div class="mt-4 flex flex-1 justify-between items-center">
-                <span class="text-sm text-gray-700">
-                    显示第 {{ startIndex }} 到 {{ endIndex }} 项，共 {{ totalCount }} 项
-                </span>
-                <div class="flex justify-end">
-                    <button @click="previousPage" :disabled="currentPage === 1"
-                        class="relative inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed">
-                        上一页
-                    </button>
-                    <button @click="nextPage" :disabled="!hasNextPage"
-                        class="relative ml-3 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed">
-                        下一页
-                    </button>
-                </div>
+            <!-- 添加"加载更多"按钮 -->
+            <div v-if="hasMore" class="flex justify-center mt-8">
+                <button
+                    @click="loadMore"
+                    class="px-6 py-3 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105 active:scale-95 shadow-md focus:ring-opacity-50"
+                >
+                    <span v-if="isLoading" class="inline-block animate-spin mr-2">&#9696;</span>
+                    {{ isLoading ? '加载中...' : '加载更多' }}
+                </button>
             </div>
         </template>
         <template v-else>
@@ -29,10 +24,10 @@
 </template>
 
 <script setup lang="ts" name="SingerSongs">
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { MusicSCardInfo } from '../types/global';
 import { useRoute } from 'vue-router';
-import { getMusicCardInfoBySingerId } from '../api/httpClient';
+import { getSingerMusicCardInfoById } from '../api/httpClient';
 import MusicCard from '../components/MusicCard.vue';
 import { RectangleStackIcon } from '@heroicons/vue/24/outline'
 
@@ -40,46 +35,52 @@ const route = useRoute();
 
 const musicList = ref<MusicSCardInfo[]>([]);
 const currentPage = ref(1);
-const pageSize = 20; // 每页显示的音乐数量
+const pageSize = 8; // 每页加载的音乐数量
 const totalCount = ref(0);
 const singerId = ref(Number(route.params.id));
 
-const startIndex = computed(() => (currentPage.value - 1) * pageSize + 1);
-const endIndex = computed(() => Math.min(currentPage.value * pageSize, totalCount.value));
-const hasNextPage = computed(() => endIndex.value < totalCount.value);
+// 添加 hasMore 计算属性
+const hasMore = computed(() => musicList.value.length < totalCount.value);
+
+const isLoading = ref(false);
 
 onMounted(() => {
     fetchMusicList();
 });
 
-watch(currentPage, () => {
-    fetchMusicList();
-});
-
-async function fetchMusicList() {
+async function fetchMusicList(isLoadMore = false) {
+    isLoading.value = true;
     const offset = (currentPage.value - 1) * pageSize;
-    const response = await getMusicCardInfoBySingerId(singerId.value, pageSize, offset);
-    if (response.code === 0) {
-        if (response.data.count > 0) {  
-            musicList.value = response.data.music_card_list_info;
+    try {
+        const response = await getSingerMusicCardInfoById(singerId.value, pageSize, offset);
+        if (response.code === 0) {
+            if (response.data.count > 0) {
+                if (isLoadMore) {
+                    musicList.value = [...musicList.value, ...response.data.music_card_info_list];
+                } else {
+                    musicList.value = response.data.music_card_info_list;
+                }
+            }
+            totalCount.value = response.data.count;
+        } else {
+            console.error('获取音乐列表失败:', response.msg);
         }
-        totalCount.value = response.data.count;
-    } else {
-        console.error('获取音乐列表失败:', response.msg);
+    } catch (error) {
+        console.error('获取音乐列表出错:', error);
+    } finally {
+        isLoading.value = false;
     }
 }
 
-function previousPage() {
-    if (currentPage.value > 1) {
-        currentPage.value--;
-    }
-}
-
-function nextPage() {
-    if (hasNextPage.value) {
+// 添加 loadMore 函数
+function loadMore() {
+    if (hasMore.value) {
         currentPage.value++;
+        fetchMusicList(true);
     }
 }
+
+// 移除 previousPage 和 nextPage 函数
 </script>
 
 <style scoped></style>

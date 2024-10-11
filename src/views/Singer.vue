@@ -1,6 +1,6 @@
 <template>
     <div class="bg-white py-12 sm:py-8">
-        <div class="mx-auto  px-6 lg:px-8">
+        <div class="mx-auto px-6 lg:px-8">
             <!-- 歌手列表 -->
             <div class="mx-auto max-w-2xl text-center">
                 <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">遇见你喜欢的歌手</h2>
@@ -11,13 +11,13 @@
             <div class="my-4  mx-16">
                 <div class="sm:hidden">
                     <label for="country" class="sr-only">选择国家/地区</label>
-                    <select id="country" v-model="country" @change="fetchSingers"
+                    <select id="country" v-model="country" @change="handleCountryChange"
                         class="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 mb-4">
                         <option v-for="option in countryOptions" :key="option.value" :value="option.value">{{
                             option.name }}</option>
                     </select>
                     <label for="gender" class="sr-only">选择性别</label>
-                    <select id="gender" v-model="gender" @change="fetchSingers"
+                    <select id="gender" v-model="gender" @change="handleGenderChange"
                         class="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
                         <option v-for="option in genderOptions" :key="option.value" :value="option.value">{{ option.name
                             }}</option>
@@ -40,47 +40,51 @@
                     </nav>
                 </div>
             </div>
-            <template v-if="totalCount > 0">
+            <template v-if="singerList.length > 0">
                 <ul role="list"
-                    class="mx-auto my-8 grid max-w-7xl grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:gap-8">
+                    class="mx-auto my-8 grid max-w-7xl grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     <li v-for="singer in singerList" :key="singer.id"
-                        class="rounded-2xl bg-gray-100 px-6 py-8 cursor-pointer"
+                        class="group relative overflow-hidden rounded-lg bg-white shadow-sm transition duration-300 ease-in-out hover:shadow-md"
                         @click="navigateToSingerDetail(singer.id)">
-                        <img class="mx-auto h-48 w-48 rounded-full md:h-56 md:w-56" :src="singer.avatar_url"
-                            :alt="singer.name" />
-                        <h3 class="mt-6 text-xl font-bold leading-tight tracking-tight text-gray-900 text-center">
-                            {{ singer.name }}
-                        </h3>
-                        <p class="mt-2 text-base leading-relaxed text-gray-600 text-center">
-                            {{ singer.main_genre }}
-                        </p>
+                        <div class="flex items-center p-4">
+                            <div class="flex-shrink-0">
+                                <img class="h-16 w-16 rounded-full object-cover transition duration-300 ease-in-out group-hover:scale-105"
+                                    :src="singer.avatar_url" :alt="singer.name" />
+                            </div>
+                            <div class="ml-4 flex-grow">
+                                <h3 class="text-lg font-semibold text-gray-900 group-hover:text-gray-700">
+                                    {{ singer.name }}
+                                </h3>
+                                <p v-if="singer.stage_name" class="text-sm text-gray-500">
+                                    {{ singer.stage_name }}
+                                </p>
+                                <div class="mt-1 flex items-center space-x-2">
+                                    <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800">
+                                        {{ singer.main_genre }}
+                                    </span>
+                                    <span class="text-xs text-gray-500">{{ getCountryName(singer.origin_country) }}</span>
+                                </div>
+                            </div>
+                            <div class="ml-4 text-right">
+                                <p class="text-sm text-gray-600">
+                                    出道: {{ singer.debut_year }}
+                                </p>
+                                <p class="mt-1 text-sm font-medium text-gray-700">
+                                    粉丝: {{ formatFollowersCount(singer.followers_count) }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-200 transform scale-x-0 transition-transform duration-300 ease-in-out group-hover:scale-x-100">
+                        </div>
                     </li>
                 </ul>
 
-                <!-- 修改分页控件 -->
-                <div class="mt-12 mx-12">
-                    <nav class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0">
-                        <div class="-mt-px flex w-0 flex-1">
-                            <a href="#" @click.prevent="prevPage" :class="{'pointer-events-none opacity-50': currentPage === 1}"
-                                class="inline-flex items-center border-t-2 border-transparent pr-1 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">
-                                <ArrowLongLeftIcon class="mr-3 h-5 w-5 text-gray-400" aria-hidden="true" />
-                                上一页
-                            </a>
-                        </div>
-                        <div class="hidden md:-mt-px md:flex">
-                            <span
-                                class="inline-flex items-center border-t-2 border-gray-500 px-4 pt-4 text-sm font-medium text-gray-500">
-                                {{ currentPage }}
-                            </span>
-                        </div>
-                        <div class="-mt-px flex w-0 flex-1 justify-end">
-                            <a href="#" @click.prevent="nextPage" :class="{'pointer-events-none opacity-50': !hasNextPage}"
-                                class="inline-flex items-center border-t-2 border-transparent pl-1 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">
-                                下一页
-                                <ArrowLongRightIcon class="ml-3 h-5 w-5 text-gray-400" aria-hidden="true" />
-                            </a>
-                        </div>
-                    </nav>
+                <!-- 加载更多按钮 -->
+                <div v-if="hasMore" class="flex justify-center mt-8">
+                    <button @click="loadMore"
+                        class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        加载更多
+                    </button>
                 </div>
             </template>
             <template v-else>
@@ -95,21 +99,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import { ArrowLongLeftIcon, ArrowLongRightIcon } from '@heroicons/vue/20/solid';
-import { getSingerSimpleInfoListByCountryAndGender } from '../api/httpClient';
-import { SingerSimpleInfo } from '../types/global';
+import { ref, onMounted } from 'vue';
+import { getSingerInfoListByCountryAndGender } from '../api/httpClient';
+import { SingerInfo } from '../types/global';
 import { useRouter } from 'vue-router';
 import { UserGroupIcon } from '@heroicons/vue/24/outline'
 
 const router = useRouter();
 
-const singerList = ref<SingerSimpleInfo[]>([]);
-const currentPage = ref(1);
-const pageSize = ref(8);
+const singerList = ref<SingerInfo[]>([]);
+const offset = ref(0);
+const limit = ref(12);
 const country = ref('');
 const gender = ref('');
-const totalCount = ref(0);
+const hasMore = ref(false);
+
 const countryOptions = [
     { name: '全部', value: '' },
     { name: '内地', value: 'china' },
@@ -119,34 +123,33 @@ const countryOptions = [
     { name: '韩国', value: 'korea' },
 ];
 
+
 const genderOptions = [
     { name: '全部', value: '' },
     { name: '男', value: 'male' },
     { name: '女', value: 'female' },
 ];
 
-// 添加计算属性
-const hasNextPage = computed(() => {
-    return totalCount.value > currentPage.value * pageSize.value;
-});
 
 const navigateToSingerDetail = (singerId: number) => {
     router.push(`/singer-detail/${singerId}`);
 };
 
-const fetchSingers = async () => {
+const fetchSingers = async (isLoadMore = false) => {
     try {
-        const response = await getSingerSimpleInfoListByCountryAndGender(
+        const response = await getSingerInfoListByCountryAndGender(
             country.value,
             gender.value,
-            currentPage.value,
-            pageSize.value
+            offset.value,
+            limit.value
         );
         if (response.code === 0) {
-            if (response.data.count > 0) {
-                singerList.value = response.data.singer_simple_info_list;
+            if (isLoadMore) {
+                singerList.value = [...singerList.value, ...response.data.singer_info_list];
+            } else {
+                singerList.value = response.data.singer_info_list;
             }
-            totalCount.value = response.data.count;
+            hasMore.value = response.data.has_more;
         } else {
             console.error('获取歌手列表失败:', response.msg);
         }
@@ -155,31 +158,49 @@ const fetchSingers = async () => {
     }
 };
 
+const handleCountryChange = (event: Event) => {
+    const target = event.target as HTMLSelectElement;
+    selectCountry(target.value);
+};
+
+const handleGenderChange = (event: Event) => {
+    const target = event.target as HTMLSelectElement;
+    selectGender(target.value);
+};
+
 const selectCountry = (value: string) => {
     country.value = value;
-    currentPage.value = 1;
-    fetchSingers();
+    resetAndFetch();
 };
 
 const selectGender = (value: string) => {
     gender.value = value;
-    currentPage.value = 1;
+    resetAndFetch();
+};
+
+const resetAndFetch = () => {
+    offset.value = 0;
+    singerList.value = [];
     fetchSingers();
 };
 
-// 修改 prevPage 和 nextPage 函数
-const prevPage = () => {
-    if (currentPage.value > 1) {
-        currentPage.value--;
-        fetchSingers();
+const loadMore = () => {
+    if (hasMore.value) {
+        offset.value += limit.value;
+        fetchSingers(true);
     }
 };
 
-const nextPage = () => {
-    if (hasNextPage.value) {
-        currentPage.value++;
-        fetchSingers();
+const formatFollowersCount = (count: number): string => {
+    if (count >= 10000) {
+        return (count / 10000).toFixed(1) + '万';
     }
+    return count.toString();
+};
+
+const getCountryName = (countryCode: string): string => {
+    const country = countryOptions.find(option => option.value === countryCode);
+    return country ? country.name : countryCode;
 };
 
 onMounted(() => {

@@ -115,7 +115,6 @@ const handleSubmit = async () => {
     const result = await login(username.value, password.value)
     if (result.code === 0) {
       userStore.setUserId(result.data.user_id)
-      userStore.setUserName(username.value)
       alert('登录成功')
       router.push('/')
     } else {

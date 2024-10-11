@@ -12,7 +12,7 @@
                                 class="block text-sm font-semibold leading-6 text-gray-900">用户名</label>
                             <div class="mt-2">
                                 <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 sm:max-w-md">
-                                    <input :value="`${username} #${id}`" type="text" name="username" id="username"
+                                    <input :value="`${userInfo.username} #${userInfo.id}`" type="text" name="username" id="username"
                                         disabled
                                         class="block flex-1 border-0 bg-transparent py-1.5 pl-4 text-gray-900 placeholder:text-gray-400 sm:text-sm sm:leading-6 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500" />
                                 </div>
@@ -23,9 +23,9 @@
                             <label for="description"
                                 class="block text-sm font-semibold leading-6 text-gray-900">描述</label>
                             <div class="mt-2">
-                                <textarea v-model="description" id="description" name="description" rows="3"
+                                <textarea v-model="userInfo.description" id="description" name="description" rows="3"
                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    :placeholder="description || ''" />
+                                    :placeholder="userInfo.description || ''" />
                             </div>
                             <p class="mt-3 text-sm leading-6 text-gray-600">通过描述，让其他用户更好地了解你。</p>
                         </div>
@@ -33,7 +33,7 @@
                         <div class="col-span-full">
                             <label for="avatar" class="block text-sm font-medium leading-6 text-gray-900">头像</label>
                             <div class="mt-2 flex items-center gap-x-3">
-                                <img v-if="userStore.userInfo.avatar_url !== '' && userStore.userInfo.avatar_url !== null && userStore.userInfo.avatar_url !== undefined" :src="userStore.userInfo.avatar_url" alt="用户头像"
+                                <img v-if="userInfo.avatar_url !== '' && userInfo.avatar_url !== null && userInfo.avatar_url !== undefined" :src="userInfo.avatar_url" alt="用户头像"
                                     class="h-12 w-12 rounded-full object-cover" />
                                 <UserCircleIcon v-else class="h-12 w-12 text-gray-300" aria-hidden="true" />
                                 <label for="avatar-upload"
@@ -45,7 +45,7 @@
                             </div>
                             <p class="mt-3 text-sm leading-6 text-gray-600 flex items-center">
                                 <ExclamationTriangleIcon class="w-5 h-5 mr-1 text-yellow-500" aria-hidden="true" />
-                                <span>注意：仅支持 PNG 格式</span>
+                                <span>支持 PNG、JPG、GIF 格式，最大 5MB</span>
                             </p>
                         </div>
 
@@ -80,7 +80,7 @@
                         <div class="sm:col-span-2">
                             <label for="gender" class="block text-sm font-medium leading-6 text-gray-900">性别</label>
                             <div class="mt-2">
-                                <select v-model="gender" id="gender" name="gender" autocomplete="sex"
+                                <select v-model="userInfo.gender" id="gender" name="gender" autocomplete="sex"
                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                                     <option value="">请选择</option>
                                     <option value="male">男</option>
@@ -94,7 +94,7 @@
                         <div class="sm:col-span-2">
                             <label for="birthday" class="block text-sm font-medium leading-6 text-gray-900">生日</label>
                             <div class="mt-2">
-                                <input v-model="birthday" type="date" name="birthday" id="birthday"
+                                <input v-model="userInfo.birthday" type="date" name="birthday" id="birthday" 
                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                             </div>
                         </div>
@@ -102,9 +102,9 @@
                         <div class="sm:col-span-2">
                             <label for="age" class="block text-sm font-medium leading-6 text-gray-900">年龄</label>
                             <div class="mt-2">
-                                <input v-model.number="age" id="age" name="age" type="number" autocomplete="age"
+                                <input v-model.number="userInfo.age" id="age" name="age" type="number" autocomplete="age"        
                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    :placeholder="age > 0 ? age.toString() : '请输入年龄'" />
+                                    :placeholder="userInfo.age > 0 ? userInfo.age.toString() : '请输入年龄'" />
                             </div>
                         </div>
 
@@ -113,9 +113,9 @@
                         <div class="sm:col-span-3">
                             <label for="email" class="block text-sm font-medium leading-6 text-gray-900">邮箱</label>
                             <div class="mt-2">
-                                <input v-model="email" id="email" name="email" type="email" autocomplete="email"
+                                <input v-model="userInfo.email" id="email" name="email" type="email" autocomplete="email"
                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    :placeholder="email || '请输入邮箱地址'" />
+                                    :placeholder="userInfo.email || '请输入邮箱地址'" />
                             </div>
                         </div>
 
@@ -142,6 +142,9 @@
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 placeholder="请输入旧密码" />
                         </div>
+
+                        <div class="sm:col-span-1"></div>
+                        
                         <div class="sm:col-span-3">
                             <label for="new-password" class="sr-only">新密码</label>
                             <input v-model="newPassword" type="password" name="new-password" id="new-password"
@@ -174,45 +177,26 @@
 <script setup lang="ts" name="Settings">
 import { ref, onMounted } from 'vue'
 import { PhotoIcon, UserCircleIcon } from '@heroicons/vue/24/solid'
-import { changePassword, updateUserInfo, uploadAvatar, uploadCover } from '../api/httpClient'
+import { changeUserPassword, updateUserInfo, uploadUserAvatar, uploadUserCover } from '../api/httpClient'
 import { useUserStore } from '../store/user'
 import { UserInfo } from '../types/global'
 import { ExclamationTriangleIcon } from '@heroicons/vue/24/outline'
 
 const userStore = useUserStore()
 
-// 按 UserInfo 字段顺序重新排序
-const id = ref(0)
-const avatarPhotoUrl = ref('')
-const coverPhotoUrl = ref('')
-const age = ref(0)
-const gender = ref('')
-const birthday = ref('')
-const email = ref('')
-const description = ref('')
+const userInfo = ref<UserInfo>({
+    ...userStore.userInfo
+})
 
 // 其他非 UserInfo 字段
-const username = ref('')
 const oldPassword = ref('')
 const newPassword = ref('')
 const confirmPassword = ref('')
 
 onMounted(() => {
     // 从 localStorage 获取用户信息并设置默认值
-    const userInfo = JSON.parse(localStorage.getItem('user_info') || '{}')
-    id.value = userInfo.id || -1
-    avatarPhotoUrl.value = userInfo.avatar_url || ''
-    coverPhotoUrl.value = userInfo.cover_url || ''
-    age.value = userInfo.age || 0
-    gender.value = userInfo.gender || ''
-    birthday.value = userInfo.birthday || ''
-    email.value = userInfo.email || ''
-    description.value = userInfo.description || ''
-
-    // 非 UserInfo 字段
-    username.value = userStore.username || ''
-
-    console.log(avatarPhotoUrl.value)
+    const localStorageUserInfo = JSON.parse(localStorage.getItem('user_info') || '{}')
+    userInfo.value = localStorageUserInfo
 })
 
 const handleAvatarChange = async (event: Event) => {
@@ -227,20 +211,13 @@ const handleAvatarChange = async (event: Event) => {
         }
 
         try {
-            const uploadAvatarResult = await uploadAvatar(userStore.userId!, file);
+            const uploadAvatarResult = await uploadUserAvatar(userStore.userId!, file);
             if (uploadAvatarResult.code === 0) {
                 // 后端请求更新用户信息
                 const updatedUserInfo: UserInfo = {
-                    id: userStore.userId,
-                    avatar_url: uploadAvatarResult.data,
-                    cover_url: userStore.userInfo.cover_url,
-                    age:    userStore.userInfo.age,
-                    gender: userStore.userInfo.gender,
-                    birthday: userStore.userInfo.birthday,
-                    email: userStore.userInfo.email,
-                    description: userStore.userInfo.description
+                    ...userInfo.value,
+                    avatar_url: uploadAvatarResult.data
                 }
- 
                 const updateUserInfoResult = await updateUserInfo(userStore.userId!, updatedUserInfo)
                 if (updateUserInfoResult.code === 0) {
                     userStore.setUserInfo(updatedUserInfo)
@@ -270,18 +247,12 @@ const handleCoverPhotoUpload = async (event: Event) => {
         }
 
         try {
-            const uploadCoverResult = await uploadCover(userStore.userId!, file);
+            const uploadCoverResult = await uploadUserCover(userStore.userId!, file);
             if (uploadCoverResult.code === 0) {
                 // 更新用户信息
                 const updatedUserInfo: UserInfo = {
-                    id: userStore.userId,
-                    avatar_url: userStore.userInfo.avatar_url,
-                    cover_url: uploadCoverResult.data,
-                    age: userStore.userInfo.age,
-                    gender: userStore.userInfo.gender,
-                    birthday: userStore.userInfo.birthday,
-                    email: userStore.userInfo.email,
-                    description: userStore.userInfo.description
+                    ...userInfo.value,
+                    cover_url: uploadCoverResult.data
                 }
                 const updateUserInfoResult = await updateUserInfo(userStore.userId!, updatedUserInfo)
                 if (updateUserInfoResult.code === 0) {
@@ -302,14 +273,7 @@ const handleCoverPhotoUpload = async (event: Event) => {
 
 const handleSaveUserInfo = async () => {
     const updatedUserInfo: UserInfo = {
-        id: userStore.userId || -1,
-        avatar_url: avatarPhotoUrl.value,
-        cover_url: coverPhotoUrl.value,
-        age: Number(age.value) || 0,
-        gender: gender.value,
-        birthday: birthday.value,
-        email: email.value,
-        description: description.value
+        ...userInfo.value
     }
 
     try {
@@ -330,13 +294,9 @@ const handleSaveUserInfo = async () => {
 }
 
 const handleCancelUserInfo = () => {
-    id.value = userStore.userId || 0
-    age.value = userStore.userInfo?.age || 0
-    gender.value = userStore.userInfo?.gender || ''
-    birthday.value = userStore.userInfo?.birthday || ''
-    email.value = userStore.userInfo?.email || ''
-    description.value = userStore.userInfo?.description || ''
-    username.value = userStore.username || ''
+    userInfo.value = {
+        ...userStore.userInfo
+    }
     alert('已取消用户信息的修改')
 }
 
@@ -359,7 +319,7 @@ const handleChangePassword = async () => {
 
     try {
         const userId = Number(localStorage.getItem('user_id'))
-        const response = await changePassword(userId, oldPassword.value, newPassword.value)
+        const response = await changeUserPassword(userId, oldPassword.value, newPassword.value)
         if (response.code === 0) {
             alert('密码修改成功')
             resetPasswordForm()

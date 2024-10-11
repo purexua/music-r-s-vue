@@ -1,27 +1,22 @@
 <template>
-    <div class="p-4">
+    <div class="p-4  min-h-screen">
         <template v-if="totalCount > 0">
-            <div class="mt-4 flex flex-1 justify-between items-center">
-                <span class="text-sm text-gray-700">
-                    显示第 {{ startIndex }} 到 {{ endIndex }} 项，共 {{ totalCount }} 项
-            </span>
-            <div class="flex justify-end">
-                <button @click="previousPage" :disabled="currentPage === 1"
-                    class="relative inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed">
-                    上一页
-                </button>
-                <button @click="nextPage" :disabled="!hasNextPage"
-                    class="relative ml-3 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed">
-                    下一页
-                </button>
-                </div>
-            </div>
             <AlbumCard :albumList="albumList" />
+            <!-- 优化"加载更多"按钮 -->
+            <div v-if="hasMore" class="flex justify-center mt-8">
+                <button
+                    @click="loadMore"
+                    class="px-6 py-3 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105 active:scale-95 shadow-md focus:ring-opacity-50"
+                >
+                    <span v-if="isLoading" class="inline-block animate-spin mr-2">&#9696;</span>
+                    {{ isLoading ? '加载中...' : '加载更多' }}
+                </button>
+            </div>
         </template> 
         <template v-else>
-            <div class="flex flex-col items-center justify-center h-64 bg-white rounded-lg">
-                <RectangleStackIcon class="w-16 h-16 text-gray-400 mb-4" />
-                <p class="text-xl font-semibold text-gray-700">暂无专辑</p>
+            <div class="flex flex-col items-center justify-center h-64 bg-white rounded-lg shadow-md transition duration-300 ease-in-out hover:shadow-lg">
+                <RectangleStackIcon class="w-20 h-20 text-gray-400 mb-4 animate-pulse" />
+                <p class="text-2xl font-semibold text-gray-700">暂无专辑</p>
                 <p class="text-sm text-gray-500 mt-2">该歌手目前没有可用的专辑</p>
             </div>
         </template>
@@ -30,56 +25,63 @@
 </template>
 
 <script setup lang="ts" name="SingerAlbums">
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { AlbumInfo } from '../types/global';
 import { useRoute } from 'vue-router';
-import { getAlbumInfoBySingerId } from '../api/httpClient';
+import { getSingerAlbumInfoById } from '../api/httpClient';
 import AlbumCard from '../components/AlbumCard.vue';
 import { RectangleStackIcon } from '@heroicons/vue/24/outline'
 const route = useRoute();
 
 const albumList = ref<AlbumInfo[]>([]);
 const currentPage = ref(1);
-const pageSize = 12; // 每页显示的专辑数量
+const pageSize = 8; // 每页显示的专辑数量
 const totalCount = ref(0);
 const singerId = ref(Number(route.params.id));
 
-const startIndex = computed(() => (currentPage.value - 1) * pageSize + 1);
-const endIndex = computed(() => Math.min(currentPage.value * pageSize, totalCount.value));
-const hasNextPage = computed(() => endIndex.value < totalCount.value);
+// 移除 startIndex 和 endIndex 计算属性
+// 添加 hasMore 计算属性
+const hasMore = computed(() => albumList.value.length < totalCount.value);
+
+const isLoading = ref(false);
 
 onMounted(() => {
     fetchAlbumList();
 });
 
-watch(currentPage, () => {
-    fetchAlbumList();
-});
-
-async function fetchAlbumList() {
+async function fetchAlbumList(isLoadMore = false) {
+    isLoading.value = true;
     const offset = (currentPage.value - 1) * pageSize;
-    const response = await getAlbumInfoBySingerId(singerId.value, pageSize, offset);
-    if (response.code === 0) {
-        if (response.data.count > 0) {
-            albumList.value = response.data.album_info_list;
+    try {
+        const response = await getSingerAlbumInfoById(singerId.value, pageSize, offset);
+        if (response.code === 0) {
+            if (response.data.count > 0) {
+                if (isLoadMore) {
+                    albumList.value = [...albumList.value, ...response.data.album_info_list];
+                } else {
+                    albumList.value = response.data.album_info_list;
+                }
+            }
+            totalCount.value = response.data.count;
+        } else {
+            console.error('获取专辑列表失败:', response.msg);
         }
-        totalCount.value = response.data.count;
-    } else {
-        console.error('获取专辑列表失败:', response.msg);
+    } catch (error) {
+        console.error('获取专辑列表出错:', error);
+    } finally {
+        isLoading.value = false;
     }
 }
 
-function previousPage() {
-    if (currentPage.value > 1) {
-        currentPage.value--;
-    }
-}
-
-function nextPage() {
-    if (hasNextPage.value) {
+// 添加 loadMore 函数
+function loadMore() {
+    if (hasMore.value) {
         currentPage.value++;
+        fetchAlbumList(true);
     }
 }
+
+// 移除 previousPage 和 nextPage 函数
 </script>
 
 <style scoped></style>
