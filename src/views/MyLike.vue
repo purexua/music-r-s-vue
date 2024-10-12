@@ -36,7 +36,7 @@ const route = useRoute();
 const navigationItems = ref<NavigationItem[]>([
     { index: 1, name: '音乐', href: '/about-me/my-like/music', title: '我喜欢的音乐' },
     { index: 2, name: '专辑', href: '/about-me/my-like/album', title: '我喜欢的专辑' },
-    { index: 3, name: 'MV', href: '/about-me/my-like/mv', title: '我喜欢的MV' },
+    { index: 3, name: '歌单', href: '/about-me/my-like/playlist', title: '我喜欢的歌单' },
 ]);
 
 const isActive = (item: NavigationItem) => {

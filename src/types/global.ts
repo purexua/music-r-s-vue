@@ -88,6 +88,17 @@ export interface NavigationItem {
     icon?: any;
 }
 
+export interface PlaylistInfo {
+    id: number;
+    cover_url: string;
+    playlist_name: string;
+    tags: string;
+    like_count: number;
+    description: string;
+    user_id: number;
+    creation_date: string;
+}
+
 export const DefaultUserInfo: UserInfo = {
     id: -1,
     username: '',
@@ -140,3 +151,15 @@ export const DefaultAlbumInfo: AlbumInfo = {
     like_count: 0,
     description: ''
 }
+
+export const DefaultPlaylistInfo: PlaylistInfo = {
+    id: 0,
+    cover_url: '',
+    playlist_name: '',
+    tags: '',
+    like_count: 0,
+    description: '',
+    user_id: 0,
+    creation_date: ''
+}
+

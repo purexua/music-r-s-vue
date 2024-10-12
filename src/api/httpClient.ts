@@ -651,3 +651,285 @@ export async function getUserLikedAlbumIdList(userId: number) {
         throw error;
     }
 }
+
+/**
+ * 获取用户收藏的歌单ID列表
+ * @param userId 用户ID
+ */
+export async function getUserLikedPlaylistIdList(userId: number) {
+    try {
+        const response = await userClient.get(`/users/${userId}/playlists-id`);
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取用户收藏的歌单ID列表失败');
+        }
+    } catch (error) {
+        console.error('获取用户收藏的歌单ID列表失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 获取用户创建过的歌单列表
+ * @param userId 用户ID
+ */
+export async function getUserCreatedPlaylistList(userId: number) {
+    try {
+        const response = await userClient.get(`/playlists/user/${userId}`);
+        return response.data;
+    } catch (error) {
+        console.error('获取用户创建过的歌单列表失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 用户收藏歌单
+ * @param userId 用户ID
+ * @param playlistId 歌单ID
+ */
+export async function likePlaylist(userId: number, playlistId: number) {
+    try {
+        const response = await userClient.post(`/users/${userId}/playlists/${playlistId}`);
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '用户收藏歌单失败');
+        }
+    } catch (error) {
+        console.error('用户收藏歌单失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 取消收藏歌单
+ * @param userId 用户ID
+ * @param playlistId 歌单ID
+ */
+export async function unlikePlaylist(userId: number, playlistId: number) {
+    try {
+        const response = await userClient.delete(`/users/${userId}/playlists/${playlistId}`);
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '取消收藏歌单失败');
+        }
+    } catch (error) {
+        console.error('取消收藏歌单失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 用户是否收藏歌单
+ * @param userId 用户ID
+ * @param playlistId 歌单ID
+ */
+export async function checkUserLikedPlaylist(userId: number, playlistId: number) {
+    try {
+        const response = await userClient.get(`/users/${userId}/playlists/${playlistId}`);
+        return response.data;
+    } catch (error) {
+        console.error('检查用户是否收藏歌单失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 获取歌单详细信息
+ * @param id 歌单ID
+ */
+export async function getPlaylistDetail(id: number) {
+    try {
+        const response = await userClient.get(`/playlists/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('获取歌单详细信息失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 获取歌单音乐列表
+ * @param id 歌单ID
+ * @param offset 偏移量
+ * @param limit 每页数量
+ */
+export async function getPlaylistMusicCardList(id: number, offset: number, limit: number) {
+    try {
+        const response = await userClient.get(`/playlists/${id}/music-card`, {
+            params: { offset, limit }
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取歌单音乐列表失败');
+        }
+    } catch (error) {
+        console.error('获取歌单音乐列表失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 获取歌单音乐ID列表
+ * @param id 歌单ID
+ */
+export async function getPlaylistMusicIdList(id: number) {
+    try {
+        const response = await userClient.get(`/playlists/${id}/musics-id`);
+        return response.data;
+    } catch (error) {
+        console.error('获取歌单音乐ID列表失败', error);
+        throw error;
+    }
+}
+
+
+/**
+ * 获取歌单信息列表
+ * @param idList 歌单ID列表
+ */
+export async function getPlaylistInfoListByIdList(idList: number[]) {
+    try {
+        const response = await userClient.post('/playlists', { ids: idList });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取歌单信息列表失败');
+        }
+    } catch (error) {
+        console.error('获取歌单信息列表失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 创建歌单
+ * @param playlistName 歌单名称
+ * @param tags 标签
+ * @param description 描述
+ * @param userId 用户ID
+ */
+export async function createPlaylist(playlistName: string, tags: string, description: string, userId: number) {
+    try {
+        const response = await userClient.post('/playlists/add', {
+            playlist_name: playlistName,
+            tags,
+            description,
+            user_id: userId
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '创建歌单失败');
+        }
+    } catch (error) {
+        console.error('创建歌单失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 更新歌单信息
+ * @param id 歌单ID
+ * @param playlistName 歌单名称
+ * @param tags 标签
+ * @param description 描述
+ */
+export async function updatePlaylist(id: number, playlistName: string, tags: string, description: string) {
+    try {
+        const response = await userClient.put(`/playlists/${id}`, {
+            playlist_name: playlistName,
+            tags,
+            description
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '更新歌单失败');
+        }
+    } catch (error) {
+        console.error('更新歌单失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 删除歌单
+ * @param id 歌单ID
+ */
+export async function deletePlaylist(id: number) {
+    try {
+        const response = await userClient.delete(`/playlists/${id}`);
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '删除歌单失败');
+        }
+    } catch (error) {
+        console.error('删除歌单失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 添加音乐到歌单
+ * @param playlistId 歌单ID
+ * @param musicId 音乐ID
+ */
+export async function addMusicToPlaylist(playlistId: number, musicId: number) {
+    try {
+        const response = await userClient.post(`/playlists/${playlistId}/musics`, {
+            music_id: musicId
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '添加音乐到歌单失败');
+        }
+    } catch (error) {
+        console.error('添加音乐到歌单失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 从歌单中移除音乐
+ * @param playlistId 歌单ID
+ * @param musicId 音乐ID
+ */
+export async function removeMusicFromPlaylist(playlistId: number, musicId: number) {
+    try {
+        const response = await userClient.delete(`/playlists/${playlistId}/musics/${musicId}`);
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '从歌单中移除音乐失败');
+        }
+    } catch (error) {
+        console.error('从歌单中移除音乐失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 获取用户创建的歌单名称和音乐是否添加
+ * @param userId 用户ID
+ * @param musicId 音乐ID
+ */
+export async function GetUserCreatedPlaylistNameAndMusicIsAdded(userId: number, musicId: number) {
+    try {
+        const response = await userClient.get(`/playlists/user/${userId}/music-is-added/${musicId}`);
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取用户创建的歌单名称和音乐是否添加失败');
+        }
+    } catch (error) {
+        console.error('获取用户创建的歌单名称和音乐是否添加失败', error);
+        throw error;
+    }
+}

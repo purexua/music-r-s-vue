@@ -59,6 +59,10 @@ const router = createRouter({
                     ],
                 },
                 {
+                    path: '/playlist-detail/:id',
+                    component: () => import('../views/PlayListDetail.vue'),
+                },
+                {
                     path: 'playlist-search',
                     component: () => import('../views/Playlist.vue'),
                 },
@@ -91,8 +95,8 @@ const router = createRouter({
                                     component: () => import('../views/MyLikeAlbum.vue'),
                                 },
                                 {
-                                    path: 'mv',
-                                    component: () => import('../views/MyLikeMV.vue'),
+                                    path: 'playlist',
+                                    component: () => import('../views/MyLikePlayList.vue'),
                                 },
                             ],
                         },

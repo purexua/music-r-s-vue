@@ -26,6 +26,22 @@
             </div>
           </div>
 
+          <!-- 新增：播放次数、点赞数和评论数 -->
+          <div class="flex justify-center items-center space-x-8 text-sm text-gray-500">
+            <div class="flex items-center">
+              <PlayCircleIcon class="h-5 w-5 mr-1 text-indigo-400" />
+              <span>{{ musicInfo.play_count }}</span>
+            </div>
+            <div class="flex items-center">
+              <HeartIcon class="h-5 w-5 mr-1 text-pink-400" />
+              <span>{{ musicInfo.like_count }}</span>
+            </div>
+            <div class="flex items-center">
+              <ChatBubbleLeftIcon class="h-5 w-5 mr-1 text-teal-400" />
+              <span>{{ musicInfo.comment_count }}</span>
+            </div>
+          </div>
+
           <div class="space-y-3">
             <div class="flex justify-between text-sm text-gray-500">
               <span>{{ formattedCurrentTime }}</span>
@@ -40,18 +56,20 @@
               class="flex flex-col items-center text-gray-400 hover:text-pink-500 focus:outline-none transition duration-300 ease-in-out transform hover:scale-110">
               <component :is="isLiked ? SolidHeartIcon : HeartIcon" :class="isLiked ? 'text-pink-500' : ''"
                 class="h-7 w-7" />
-              <span class="text-xs mt-1 font-medium">{{ musicInfo.like_count }}</span>
+              <span class="text-xs mt-1 font-medium">喜欢</span>
             </button>
 
-            <div class="flex flex-col items-center text-indigo-400">
-              <PlayCircleIcon class="h-7 w-7" />
-              <span class="text-xs mt-1 font-medium">{{ musicInfo.play_count }}</span>
-            </div>
+            <!-- 修改：添加到歌单按钮 -->
+            <button @click="showAddToPlaylistMenu"
+              class="flex flex-col items-center text-gray-400 hover:text-indigo-500 focus:outline-none transition duration-300 ease-in-out transform hover:scale-110">
+              <PlusCircleIcon class="h-7 w-7" />
+              <span class="text-xs mt-1 font-medium">添加到歌单</span>
+            </button>
 
             <button @click="showComments"
               class="flex flex-col items-center text-gray-400 hover:text-teal-500 focus:outline-none transition duration-300 ease-in-out transform hover:scale-110">
               <ChatBubbleLeftIcon class="h-7 w-7" />
-              <span class="text-xs mt-1 font-medium">{{ musicInfo.comment_count }}</span>
+              <span class="text-xs mt-1 font-medium">评论</span>
             </button>
           </div>
         </div>
@@ -81,6 +99,41 @@
       </div>
     </div>
 
+    <!-- 新增：添加到歌单菜单 -->
+    <div v-if="showPlaylistMenu" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+      <div class="bg-white rounded-2xl p-6 w-96 max-w-[90%] shadow-2xl transform transition-all duration-300 ease-out"
+        :class="showPlaylistMenu ? 'scale-100 opacity-100' : 'scale-95 opacity-0'">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold text-gray-800">选择歌单</h3>
+          <button @click="closePlaylistMenu" class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
+            <XMarkIcon class="h-6 w-6" />
+          </button>
+        </div>
+        <ul
+          class="space-y-3 max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-indigo-300 scrollbar-track-gray-100">
+          <li v-for="playlist in userPlaylists" :key="playlist.playlist_id"
+            class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+            <div class="flex items-center space-x-3">
+              <MusicalNoteIcon class="h-5 w-5 text-indigo-500" />
+              <span class="font-medium text-gray-700">{{ playlist.playlist_name }}</span>
+            </div>
+            <button @click="toggleMusicInPlaylist(playlist.playlist_id, playlist.is_added || false)"
+              class="flex items-center space-x-1 px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              :class="playlist.is_added
+                ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                : 'bg-indigo-500 text-white hover:bg-indigo-600'">
+              <component :is="playlist.is_added ? MinusIcon : PlusIcon" class="h-4 w-4" />
+              <span>{{ playlist.is_added ? '移除' : '添加' }}</span>
+            </button>
+          </li>
+        </ul>
+        <button @click="closePlaylistMenu"
+          class="mt-6 w-full bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+          关闭
+        </button>
+      </div>
+    </div>
+
     <audio ref="audioPlayer" :src="musicInfo.music_url"></audio>
   </div>
 </template>
@@ -88,10 +141,10 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, onUnmounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { HeartIcon, PlayIcon, PauseIcon, ChatBubbleLeftIcon, PlayCircleIcon } from '@heroicons/vue/24/outline'
+import { HeartIcon, PlayIcon, PauseIcon, ChatBubbleLeftIcon, PlayCircleIcon, MinusIcon, PlusCircleIcon, PlusIcon, XMarkIcon, MusicalNoteIcon } from '@heroicons/vue/24/outline'
 import { HeartIcon as SolidHeartIcon } from '@heroicons/vue/24/solid'
 import { DefaultMusicInfo, MusicInfo } from '../types/global'
-import { getMusicById, checkUserLikingMusic, likeMusic, unlikeMusic, increaseMusicPlayCount } from '../api/httpClient'
+import { getMusicById, checkUserLikingMusic, likeMusic, unlikeMusic, increaseMusicPlayCount, GetUserCreatedPlaylistNameAndMusicIsAdded, addMusicToPlaylist, removeMusicFromPlaylist } from '../api/httpClient'
 import { useUserStore } from '../store/user'
 
 interface LyricLine {
@@ -116,6 +169,9 @@ const audioPlayer = ref<HTMLAudioElement | null>(null)
 
 const formattedCurrentTime = computed(() => formatTime(currentTime.value))
 const formattedDuration = computed(() => formatTime(duration.value))
+
+const showPlaylistMenu = ref(false)
+const userPlaylists = ref<Array<{ playlist_name: string; is_added?: boolean; playlist_id: number }>>([])
 
 onMounted(() => {
   const id = Number(route.params.music_id)
@@ -289,6 +345,48 @@ function resetAudioPlayer() {
     audioPlayer.value.pause()
     audioPlayer.value.currentTime = 0
     isPlaying.value = false
+  }
+}
+
+async function showAddToPlaylistMenu() {
+  if (!userStore.isLoggedIn) {
+    console.log('请先登录')
+    return
+  }
+
+  try {
+    const response = await GetUserCreatedPlaylistNameAndMusicIsAdded(userStore.userId, musicInfo.value.id)
+    userPlaylists.value = response.data.data_list
+    showPlaylistMenu.value = true
+  } catch (error) {
+    console.error('获取用户歌单失败:', error)
+  }
+}
+
+function closePlaylistMenu() {
+  showPlaylistMenu.value = false
+}
+
+async function toggleMusicInPlaylist(playlistId: number, isAdded: boolean) {
+  try {
+    if (isAdded) {
+      await removeMusicFromPlaylist(playlistId, musicInfo.value.id)
+    } else {
+      await addMusicToPlaylist(playlistId, musicInfo.value.id)
+    }
+
+    // 更新本地状态
+    const playlistIndex = userPlaylists.value.findIndex(p => p.playlist_id === playlistId)
+    if (playlistIndex !== -1) {
+      userPlaylists.value[playlistIndex].is_added = !isAdded
+    }
+
+    // 显示成功消息
+    console.log(isAdded ? '音乐已从歌单中移除' : '音乐已添加到歌单')
+  } catch (error) {
+    console.error('操作失败:', error)
+    // 显示错误消息
+    console.log('操作失败，请稍后重试')
   }
 }
 </script>
