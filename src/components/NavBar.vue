@@ -11,7 +11,7 @@
           </div>
           <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
             <RouterLink v-for="item in activeNavigation" :key="item.index" :to="item.href"
-              :class="[item.current ? 'border-gray-800 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700', 'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium']"
+              :class="[item.current ? 'border-emerald-700 text-gray-800' : 'border-transparent text-gray-500 hover:border-emerald-700 hover:text-emerald-700', 'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium transition-colors duration-200']"
               :aria-current="item.current ? 'page' : undefined">
               {{ item.name }}
             </RouterLink>
@@ -24,18 +24,18 @@
           </template>
           <template v-else>
             <router-link to="/login"
-              class="rounded-md bg-white px-6 py-2.5 text-sm font-semibold text-black shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 mr-2">
+              class="rounded-md bg-white px-6 py-2.5 text-sm font-semibold text-gray-800 shadow-sm hover:bg-gray-100 hover:text-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 mr-2 transition-colors duration-200">
               登录
             </router-link>
             <router-link to="/register"
-              class="rounded-md bg-black px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">
+              class="rounded-md bg-emerald-700 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 transition-colors duration-200">
               注册
             </router-link>
           </template>
         </div>
         <div class="-mr-2 flex items-center sm:hidden">
           <DisclosureButton
-            class="relative inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            class="relative inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:ring-offset-2 transition-colors duration-200">
             <span class="absolute -inset-0.5" />
             <span class="sr-only">Open main menu</span>
             <Bars3Icon v-if="!open" class="block h-6 w-6" aria-hidden="true" />
@@ -48,7 +48,7 @@
     <DisclosurePanel class="sm:hidden">
       <div class="space-y-1 pb-3 pt-2">
         <DisclosureButton v-for="item in activeNavigation" :key="item.name" as="a" :href="item.href"
-          :class="[item.current ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800', 'block border-l-4 py-2 pl-3 pr-4 text-base font-medium']"
+          :class="[item.current ? 'border-emerald-700 bg-emerald-50 text-emerald-700' : 'border-transparent text-gray-600 hover:border-emerald-700 hover:bg-gray-50 hover:text-emerald-700', 'block border-l-4 py-2 pl-3 pr-4 text-base font-medium transition-colors duration-200']"
           :aria-current="item.current ? 'page' : undefined">{{ item.title }}</DisclosureButton>
       </div>
       <div class="border-t border-gray-200 pb-3 pt-4">

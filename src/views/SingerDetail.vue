@@ -2,22 +2,22 @@
   <section class="isolate overflow-hidden bg-white px-6 lg:px-8" v-if="singerInfo">
     <div class="relative mx-auto max-w-2xl py-24 sm:py-32 lg:max-w-4xl">
       <div
-        class="absolute left-1/2 top-0 -z-10 h-[50rem] w-[90rem] -translate-x-1/2 bg-[radial-gradient(50%_100%_at_top,theme(colors.indigo.100),white)] opacity-20 lg:left-36" />
+        class="absolute left-1/2 top-0 -z-10 h-[50rem] w-[90rem] -translate-x-1/2 bg-[radial-gradient(50%_100%_at_top,theme(colors.emerald.100),white)] opacity-20 lg:left-36" />
       <div
-        class="absolute inset-y-0 right-1/2 -z-10 mr-12 w-[150vw] origin-bottom-left skew-x-[-30deg] bg-white shadow-xl shadow-indigo-600/10 ring-1 ring-indigo-50 sm:mr-20 md:mr-0 lg:right-full lg:-mr-36 lg:origin-center" />
+        class="absolute inset-y-0 right-1/2 -z-10 mr-12 w-[150vw] origin-bottom-left skew-x-[-30deg] bg-white shadow-xl shadow-emerald-600/10 ring-1 ring-emerald-50 sm:mr-20 md:mr-0 lg:right-full lg:-mr-36 lg:origin-center" />
       <figure class="grid grid-cols-1 items-center gap-x-6 gap-y-8 lg:gap-x-10">
         <div class="col-end-1 w-16 lg:row-span-4 lg:w-72">
-          <img class="rounded-xl bg-indigo-50 lg:rounded-3xl" :src="singerInfo.avatar_url" :alt="singerInfo.name" />
+          <img class="rounded-xl bg-emerald-50 lg:rounded-3xl" :src="singerInfo.avatar_url" :alt="singerInfo.name" />
         </div>
         <figcaption class="text-base lg:col-start-1 lg:row-start-3">
           <div class="flex items-center justify-between mb-4">
-            <h2 class="font-semibold text-gray-900 text-3xl">{{ singerInfo.name }}</h2>
+            <h2 class="font-semibold text-gray-800 text-3xl">{{ singerInfo.name }}</h2>
             <div class="flex items-center">
               <span class="mr-2 text-sm text-gray-600">{{ isFollowing ? '已关注' : '关注' }}</span>
               <Switch v-model="isFollowing" :class="[
-                isFollowing ? 'bg-gray-600' : 'bg-gray-200',
+                isFollowing ? 'bg-emerald-600' : 'bg-gray-200',
                 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out',
-                'hover:ring-2 hover:ring-gray-600 hover:ring-offset-2 hover:shadow-md hover:scale-105 transform transition-all'
+                'hover:ring-2 hover:ring-emerald-600 hover:ring-offset-2 hover:shadow-md hover:scale-105 transform transition-all'
               ]" @update:modelValue="toggleFollow">
                 <span class="sr-only">关注歌手</span>
                 <span :class="[
@@ -37,7 +37,7 @@
                     isFollowing ? 'opacity-100 duration-200 ease-in' : 'opacity-0 duration-100 ease-out',
                     'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity'
                   ]" aria-hidden="true">
-                    <svg class="h-3 w-3 text-gray-600" fill="currentColor" viewBox="0 0 12 12">
+                    <svg class="h-3 w-3 text-emerald-600" fill="currentColor" viewBox="0 0 12 12">
                       <path
                         d="M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z" />
                     </svg>
@@ -70,11 +70,11 @@
 
           <div class="mt-4 p-3 bg-gray-100 rounded-lg">
             <div class="text-gray-700 font-medium">粉丝数</div>
-            <div class="text-2xl font-bold text-gray-900">{{ formatNumber(singerInfo.followers_count) }}</div>
+            <div class="text-2xl font-bold text-gray-800">{{ formatNumber(singerInfo.followers_count) }}</div>
           </div>
         </figcaption>
         <div class="relative col-span-2 lg:col-start-1 lg:row-start-2">
-          <blockquote class="text-xl font-semibold leading-8 text-gray-900 sm:text-2xl sm:leading-9">
+          <blockquote class="text-xl font-semibold leading-8 text-gray-800 sm:text-2xl sm:leading-9">
             <p>{{ singerInfo.description }}</p>
           </blockquote>
         </div>
@@ -85,7 +85,7 @@
     <div class="sm:hidden">
       <label for="tabs" class="sr-only">选择标签</label>
       <select id="tabs" name="tabs" v-model="currentTab"
-        class="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+        class="block w-full rounded-md border-gray-300 focus:border-emerald-500 focus:ring-emerald-500"
         @change="(event) => changeTab(Number((event.target as HTMLSelectElement).value))">
         <option v-for="tab in tabs" :key="tab.name" :value="tab.index">{{ tab.name }}</option>
       </select>
@@ -94,10 +94,10 @@
       <div class="border-b border-gray-200">
         <nav class="-mb-px flex space-x-8" aria-label="Tabs">
           <a v-for="tab in tabs" :key="tab.name" :href="tab.href"
-            :class="[currentTab === tab.index ? 'border-gray-500 text-gray-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700', 'group inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium']"
+            :class="[currentTab === tab.index ? 'border-emerald-500 text-emerald-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-emerald-700', 'group inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium transition-colors duration-200']"
             :aria-current="currentTab === tab.index ? 'page' : undefined" @click.prevent="changeTab(tab.index)">
             <component :is="tab.icon"
-              :class="[currentTab === tab.index ? 'text-grey-500' : 'text-gray-400 group-hover:text-gray-500', '-ml-0.5 mr-2 h-5 w-5']"
+              :class="[currentTab === tab.index ? 'text-emerald-500' : 'text-gray-400 group-hover:text-emerald-500', '-ml-0.5 mr-2 h-5 w-5']"
               aria-hidden="true" />
             <span>{{ tab.name }}</span>
           </a>
@@ -110,6 +110,7 @@
     <RouterView />
   </div>
 </template>
+
 <script setup lang="ts" name="SingerDetail">
 import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';

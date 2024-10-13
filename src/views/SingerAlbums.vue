@@ -1,12 +1,12 @@
 <template>
-    <div class="p-4  min-h-screen">
+    <div class="p-4 min-h-screen bg-white">
         <template v-if="totalCount > 0">
             <AlbumCard :albumList="albumList" />
             <!-- 优化"加载更多"按钮 -->
             <div v-if="hasMore" class="flex justify-center mt-8">
                 <button
                     @click="loadMore"
-                    class="px-6 py-3 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105 active:scale-95 shadow-md focus:ring-opacity-50"
+                    class="px-6 py-3 bg-emerald-600 text-white rounded-full hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105 active:scale-95 shadow-md focus:ring-opacity-50"
                 >
                     <span v-if="isLoading" class="inline-block animate-spin mr-2">&#9696;</span>
                     {{ isLoading ? '加载中...' : '加载更多' }}
@@ -15,12 +15,11 @@
         </template> 
         <template v-else>
             <div class="flex flex-col items-center justify-center h-64 bg-white rounded-lg shadow-md transition duration-300 ease-in-out hover:shadow-lg">
-                <RectangleStackIcon class="w-20 h-20 text-gray-400 mb-4 animate-pulse" />
-                <p class="text-2xl font-semibold text-gray-700">暂无专辑</p>
+                <RectangleStackIcon class="w-20 h-20 text-emerald-400 mb-4 animate-pulse" />
+                <p class="text-2xl font-semibold text-gray-800">暂无专辑</p>
                 <p class="text-sm text-gray-500 mt-2">该歌手目前没有可用的专辑</p>
             </div>
         </template>
-        
     </div>
 </template>
 

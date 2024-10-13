@@ -1,18 +1,17 @@
 <template>
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-6">
-        <article 
-            v-for="album in props.albums" 
-            :key="album.id" 
+        <article v-for="album in props.albums" :key="album.id"
             class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-lg cursor-pointer"
-            @click="navigateToAlbumDetail(album.id)"
-        >
+            @click="navigateToAlbumDetail(album.id)">
             <img :src="album.cover_url" :alt="album.album_name" class="w-full h-48 object-cover" />
             <div class="p-4">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-lg font-semibold text-gray-900 truncate">{{ album.album_name }}</h3>
-                    <span class="text-sm font-medium text-gray-600 bg-gray-100 rounded-full px-2 py-1">{{ album.like_count }} 赞</span>
+                    <h3 class="text-lg font-semibold text-gray-800 truncate group-hover:text-emerald-700">{{
+                        album.album_name }}</h3>
+                    <span class="text-sm font-medium text-gray-500 bg-gray-100 rounded-full px-2 py-1">{{
+                        album.like_count }} 赞</span>
                 </div>
-                <p class="text-sm text-gray-600 line-clamp-2 mb-2">{{ album.description }}</p>
+                <p class="text-sm text-gray-500 line-clamp-2 mb-2">{{ album.description }}</p>
                 <div class="flex items-center justify-between text-sm text-gray-500">
                     <div class="flex items-center">
                         <!-- <img :src="album.singer_avatar_url" :alt="album.singer_name" class="h-6 w-6 rounded-full mr-2" /> -->

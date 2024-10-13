@@ -5,17 +5,17 @@
                 <!-- 展示喜欢的音乐列表 -->
                 <div v-if="likedMusic.length > 0">
                     <div class="mx-auto max-w-2xl">
-                        <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">我喜欢的音乐</h2>
-                        <p class="mt-6 text-lg leading-8 text-gray-600">这些是我收藏的精选音乐,每一首都承载着独特的音乐记忆。</p>
+                        <h2 class="text-3xl font-bold tracking-tight text-gray-800 sm:text-4xl">我喜欢的音乐</h2>
+                        <p class="mt-6 text-lg leading-8 text-gray-500">这些是我收藏的精选音乐,每一首都承载着独特的音乐记忆。</p>
                     </div>
                     <MusicCard :musicList="likedMusic" />
                 </div>
                 <div v-else class="flex flex-col items-center justify-center text-gray-500">
-                    <MusicalNoteIcon class="w-16 h-16 mb-4 animate-bounce" />
-                    <p class="text-xl font-medium mb-2">您还没有喜欢的音乐</p>
+                    <MusicalNoteIcon class="w-16 h-16 mb-4 animate-bounce text-emerald-600" />
+                    <p class="text-xl font-medium mb-2 text-gray-800">您还没有喜欢的音乐</p>
                     <p class="text-sm mb-8">去探索一些新的音乐,开始您的音乐收藏之旅吧！</p>
                     <button @click="navigateToDiscoverMusic"
-                        class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300">
+                        class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition duration-300">
                         发现音乐
                     </button>
                 </div>

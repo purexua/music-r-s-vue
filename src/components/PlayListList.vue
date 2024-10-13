@@ -2,7 +2,7 @@
     <div class="relative">
         <div class="mb-4 flex justify-end my-4">
             <button @click="openModal"
-                class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300">
+                class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition duration-300">
                 创建歌单
             </button>
         </div>
@@ -25,18 +25,18 @@
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex flex-wrap gap-2">
                                 <span v-for="(tag, index) in playlist.tags.split('-')" :key="index"
-                                    class="px-2 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full">
+                                    class="px-2 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full transition-colors duration-300 hover:bg-gray-300 hover:text-emerald-700">
                                     {{ tag.trim() }}
                                 </span>
                             </div>
                             <div class="flex items-center text-gray-600">
-                                <HeartIcon class="h-5 w-5 text-pink-500 mr-1" />
-                                <span class="text-sm">{{ formatNumber(playlist.like_count) }}</span>
+                                <HeartIcon class="h-5 w-5 text-emerald-600 mr-1" />
+                                <span class="text-sm text-gray-800">{{ formatNumber(playlist.like_count) }}</span>
                             </div>
                         </div>
                     </div>
                     <button @click="navigateToPlaylistDetail(playlist.id)"
-                        class="w-full px-4 py-2 bg-teal-600 text-white text-sm font-medium rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-300 flex items-center justify-center">
+                        class="w-full px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors duration-300 flex items-center justify-center">
                         <PlayIcon class="h-5 w-5 mr-2" />
                         歌单详情
                     </button>
@@ -72,14 +72,13 @@
                                     </div>
                                     <div class="sm:col-span-8 lg:col-span-7">
                                         <div class="flex items-center justify-between">
-                                            <h2 class="text-2xl font-bold text-gray-900 sm:pr-12 flex items-center">
-                                                <MusicalNoteIcon class="h-6 w-6 text-teal-600 mr-2" />
+                                            <h2 class="text-2xl font-bold text-gray-800 sm:pr-12 flex items-center">
+                                                <MusicalNoteIcon class="h-6 w-6 text-emerald-600 mr-2" />
                                                 {{ selectedPlaylist.playlist_name }}
                                             </h2>
                                             <div class="flex items-center text-gray-600">
-                                                <HeartIcon class="h-6 w-6 text-pink-500 mr-1" />
-                                                <span class="text-lg font-semibold">{{ selectedPlaylist.like_count
-                                                    }}</span>
+                                                <HeartIcon class="h-6 w-6 text-emerald-600 mr-1" />
+                                                <span class="text-lg font-semibold text-gray-800">{{ selectedPlaylist.like_count }}</span>
                                             </div>
                                         </div>
 
@@ -89,8 +88,8 @@
                                             <div class="flex flex-wrap gap-2 mb-4">
                                                 <span v-for="(tag, index) in selectedPlaylist.tags.split('-')"
                                                     :key="index"
-                                                    class="px-3 py-1 bg-gray-100 text-gray-800 text-sm font-medium rounded-full flex items-center border border-gray-300 hover:bg-gray-200 transition-colors duration-200">
-                                                    <TagIcon class="h-4 w-4 mr-1 text-teal-500" />
+                                                    class="px-3 py-1 bg-gray-100 text-gray-800 text-sm font-medium rounded-full flex items-center border border-gray-300 hover:bg-gray-200 transition-colors duration-200 hover:text-emerald-700">
+                                                    <TagIcon class="h-4 w-4 mr-1 text-emerald-600" />
                                                     {{ tag.trim() }}
                                                 </span>
                                             </div>
@@ -98,22 +97,21 @@
 
                                         <section aria-labelledby="description-heading" class="mt-6">
                                             <h3 id="description-heading"
-                                                class="text-lg font-medium text-gray-900 flex items-center">
+                                                class="text-lg font-medium text-gray-800 flex items-center">
                                                 <InformationCircleIcon class="h-5 w-5 text-gray-500 mr-2" />
                                                 歌单描述
                                             </h3>
 
                                             <div class="mt-2">
-                                                <p class="text-base text-gray-700">{{ selectedPlaylist.description }}
-                                                </p>
+                                                <p class="text-base text-gray-700">{{ selectedPlaylist.description }}</p>
                                             </div>
                                         </section>
 
                                         <div class="mt-8 flex space-x-4">
-                                            <button @click="handleLikePlaylist" :class="[
+                                            <button @click="handleLikePlaylist" :class="[ 
                                                 'flex-1 flex items-center justify-center px-4 py-2 text-base font-medium rounded-md transition-colors duration-200',
                                                 isLiked
-                                                    ? 'bg-pink-500 text-white hover:bg-pink-600 hover:shadow-md'
+                                                    ? 'bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-md'
                                                     : 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 hover:shadow-sm'
                                             ]">
                                                 <HeartIcon
@@ -155,7 +153,7 @@
                             <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                                 <div class="sm:flex sm:items-start">
                                     <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
-                                        <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900">
+                                        <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-800">
                                             添加新歌单
                                         </DialogTitle>
                                         <div class="mt-2">
@@ -165,28 +163,28 @@
                                                         class="block text-sm font-medium text-gray-700">歌单名称</label>
                                                     <input type="text" id="playlist-name"
                                                         v-model="newPlaylist.playlist_name" required
-                                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 sm:text-sm">
                                                 </div>
                                                 <div class="mb-4">
                                                     <label for="tags" class="block text-sm font-medium text-gray-700">标签
                                                         (最多3个，用-分隔)</label>
                                                     <input type="text" id="tags" v-model="newPlaylist.tags"
-                                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 sm:text-sm">
                                                 </div>
                                                 <div class="mb-4">
                                                     <label for="description"
                                                         class="block text-sm font-medium text-gray-700">描述</label>
                                                     <textarea id="description" v-model="newPlaylist.description"
                                                         rows="3"
-                                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"></textarea>
+                                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 sm:text-sm"></textarea>
                                                 </div>
                                                 <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                                                     <button type="submit"
-                                                        class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto">
+                                                        class="inline-flex w-full justify-center rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 sm:ml-3 sm:w-auto">
                                                         添加
                                                     </button>
                                                     <button type="button" @click="closeModal"
-                                                        class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
+                                                        class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-800 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
                                                         取消
                                                     </button>
                                                 </div>

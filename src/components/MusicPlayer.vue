@@ -1,9 +1,10 @@
 <template>
-  <div class="bg-white shadow rounded-lg p-6 m-6 max-w-sm mx-auto transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg">
+  <div
+    class="bg-white shadow rounded-lg p-6 m-6 max-w-sm mx-auto transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg">
     <div class="flex items-center space-x-4">
       <img :src="cover_url" alt="专辑封面" class="h-16 w-16 rounded-md object-cover">
       <div class="flex-1">
-        <h3 class="text-lg font-semibold text-gray-900 truncate">{{ title }}#{{ id }}</h3>
+        <h3 class="text-lg font-semibold text-gray-800 truncate">{{ title }}#{{ id }}</h3>
         <p class="text-sm text-gray-500 truncate">{{ singer_name }} • {{ album_name }}</p>
       </div>
     </div>
@@ -19,17 +20,17 @@
 
     <div class="mt-4 flex justify-between items-center">
       <button @click="toggleLike"
-        class="flex items-center text-gray-400 hover:text-red-500 focus:outline-none transition duration-300 ease-in-out transform hover:scale-110">
-        <HeartIcon :class="['h-6 w-6', { 'text-red-500 fill-current': isLiked }]" />
+        class="flex items-center text-gray-400 hover:text-emerald-700 focus:outline-none transition duration-300 ease-in-out transform hover:scale-110">
+        <HeartIcon :class="['h-6 w-6', { 'text-emerald-700 fill-current': isLiked }]" />
         <span class="ml-1 text-xs">{{ likeCount }}</span>
       </button>
       <button @click="togglePlay"
-        class="bg-indigo-600 text-white rounded-full p-2 hover:bg-indigo-700 focus:outline-none transition duration-300 ease-in-out transform hover:scale-110">
+        class="bg-emerald-600 text-white rounded-full p-2 hover:bg-emerald-700 focus:outline-none transition duration-300 ease-in-out transform hover:scale-110">
         <PlayIcon v-if="!isPlaying" class="h-8 w-8" />
         <PauseIcon v-else class="h-8 w-8" />
       </button>
       <button @click="showComments"
-        class="flex items-center text-gray-400 hover:text-gray-600 focus:outline-none transition duration-300 ease-in-out transform hover:scale-110">
+        class="flex items-center text-gray-400 hover:text-emerald-700 focus:outline-none transition duration-300 ease-in-out transform hover:scale-110">
         <ChatBubbleLeftIcon class="h-6 w-6" />
         <span class="ml-1 text-xs">{{ commentCount }}</span>
       </button>
@@ -134,9 +135,9 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (audioPlayer.value) {
-    audioPlayer.value.removeEventListener('loadedmetadata', () => {})
-    audioPlayer.value.removeEventListener('timeupdate', () => {})
-    audioPlayer.value.removeEventListener('ended', () => {})
+    audioPlayer.value.removeEventListener('loadedmetadata', () => { })
+    audioPlayer.value.removeEventListener('timeupdate', () => { })
+    audioPlayer.value.removeEventListener('ended', () => { })
   }
 })
 </script>

@@ -3,7 +3,7 @@
         <div class="mx-auto px-6 lg:px-8">
             <!-- 歌手列表 -->
             <div class="mx-auto max-w-2xl text-center">
-                <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">遇见你喜欢的歌手</h2>
+                <h2 class="text-3xl font-bold tracking-tight text-gray-800 sm:text-4xl">遇见你喜欢的歌手</h2>
                 <p class="mt-4 text-lg leading-8 text-gray-600">用音符编织梦想，用歌声传递情感。每位歌手都是一个独特的音乐宇宙。</p>
             </div>
 
@@ -12,13 +12,13 @@
                 <div class="sm:hidden">
                     <label for="country" class="sr-only">选择国家/地区</label>
                     <select id="country" v-model="country" @change="handleCountryChange"
-                        class="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 mb-4">
+                        class="block w-full rounded-md border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 mb-4">
                         <option v-for="option in countryOptions" :key="option.value" :value="option.value">{{
                             option.name }}</option>
                     </select>
                     <label for="gender" class="sr-only">选择性别</label>
                     <select id="gender" v-model="gender" @change="handleGenderChange"
-                        class="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                        class="block w-full rounded-md border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
                         <option v-for="option in genderOptions" :key="option.value" :value="option.value">{{ option.name
                             }}</option>
                     </select>
@@ -27,14 +27,14 @@
                     <nav class="flex space-x-4 mb-4" aria-label="国家/地区">
                         <a v-for="option in countryOptions" :key="option.value"
                             @click.prevent="selectCountry(option.value)" href="#"
-                            :class="[country === option.value ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700', 'rounded-md px-3 py-2 text-sm font-medium']">
+                            :class="[country === option.value ? 'bg-gray-100 text-emerald-700' : 'text-gray-600 hover:text-emerald-700', 'rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200']">
                             {{ option.name }}
                         </a>
                     </nav>
                     <nav class="flex space-x-4" aria-label="性别">
                         <a v-for="option in genderOptions" :key="option.value"
                             @click.prevent="selectGender(option.value)" href="#"
-                            :class="[gender === option.value ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700', 'rounded-md px-3 py-2 text-sm font-medium']">
+                            :class="[gender === option.value ? 'bg-gray-100 text-emerald-700' : 'text-gray-600 hover:text-emerald-700', 'rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200']">
                             {{ option.name }}
                         </a>
                     </nav>
@@ -52,17 +52,20 @@
                                     :src="singer.avatar_url" :alt="singer.name" />
                             </div>
                             <div class="ml-4 flex-grow">
-                                <h3 class="text-lg font-semibold text-gray-900 group-hover:text-gray-700">
+                                <h3
+                                    class="text-lg font-semibold text-gray-800 group-hover:text-emerald-700 transition-colors duration-200">
                                     {{ singer.name }}
                                 </h3>
                                 <p v-if="singer.stage_name" class="text-sm text-gray-500">
                                     {{ singer.stage_name }}
                                 </p>
                                 <div class="mt-1 flex items-center space-x-2">
-                                    <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800">
+                                    <span
+                                        class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
                                         {{ singer.main_genre }}
                                     </span>
-                                    <span class="text-xs text-gray-500">{{ getCountryName(singer.origin_country) }}</span>
+                                    <span class="text-xs text-gray-500">{{ getCountryName(singer.origin_country)
+                                        }}</span>
                                 </div>
                             </div>
                             <div class="ml-4 text-right">
@@ -74,7 +77,8 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-200 transform scale-x-0 transition-transform duration-300 ease-in-out group-hover:scale-x-100">
+                        <div
+                            class="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-200 transform scale-x-0 transition-transform duration-300 ease-in-out group-hover:scale-x-100">
                         </div>
                     </li>
                 </ul>
@@ -82,15 +86,15 @@
                 <!-- 加载更多按钮 -->
                 <div v-if="hasMore" class="flex justify-center mt-8">
                     <button @click="loadMore"
-                        class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-colors duration-200">
                         加载更多
                     </button>
                 </div>
             </template>
             <template v-else>
                 <div class="flex flex-col items-center justify-center h-64 bg-white rounded-lg my-8">
-                    <UserGroupIcon class="w-16 h-16 text-gray-400 mb-4" />
-                    <p class="text-xl font-semibold text-gray-700">暂无符合条件的歌手</p>
+                    <UserGroupIcon class="w-16 h-16 text-emerald-400 mb-4" />
+                    <p class="text-xl font-semibold text-gray-800">暂无符合条件的歌手</p>
                     <p class="text-sm text-gray-500 mt-2">换个条件试试吧</p>
                 </div>
             </template>

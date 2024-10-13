@@ -5,17 +5,17 @@
                 <!-- 展示歌单列表 -->
                 <div v-if="likedPlaylists.length > 0">
                     <div class="mx-auto max-w-2xl">
-                        <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">我收藏的歌单</h2>
-                        <p class="mt-6 text-lg leading-8 text-gray-600">这些是我收藏的精选歌单,每一个都代表着独特的音乐品味。</p>
+                        <h2 class="text-3xl font-bold tracking-tight text-gray-800 sm:text-4xl">我收藏的歌单</h2>
+                        <p class="mt-6 text-lg leading-8 text-gray-500">这些是我收藏的精选歌单,每一个都代表着独特的音乐品味。</p>
                     </div>
                     <PlayListCard :playlists="likedPlaylists" />
                 </div>
                 <div v-else class="flex flex-col items-center justify-center text-gray-500">
-                    <MusicalNoteIcon class="w-16 h-16 mb-4 animate-bounce" />
-                    <p class="text-xl font-medium mb-2">您还没有收藏的歌单</p>
+                    <MusicalNoteIcon class="w-16 h-16 mb-4 animate-bounce text-emerald-600" />
+                    <p class="text-xl font-medium mb-2 text-gray-800">您还没有收藏的歌单</p>
                     <p class="text-sm mb-8">去探索一些新的歌单,开始您的音乐收藏之旅吧！</p>
                     <button @click="navigateToDiscoverPlaylists"
-                        class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300">
+                        class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition duration-300">
                         发现歌单
                     </button>
                 </div>

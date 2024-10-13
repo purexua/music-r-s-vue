@@ -1,9 +1,9 @@
 <template>
-  <div class="p-8">
+  <div class="p-6 bg-white">
     <div class="max-w-7xl mx-auto">
       <div class="grid grid-cols-1 lg:grid-cols-5 gap-12">
         <!-- 左侧：封面和控制 -->
-        <div class="lg:col-span-2 space-y-8 bg-white">
+        <div class="lg:col-span-2 space-y-8">
           <div class="relative group w-96 h-96 mx-auto">
             <img :src="musicInfo.cover_url" :alt="musicInfo.title"
               class="w-full h-full object-cover rounded-2xl shadow-md transition duration-300 group-hover:shadow-xl">
@@ -26,7 +26,7 @@
             </div>
           </div>
 
-          <!-- 新增：播放次数、点赞数和评论数 -->
+          <!-- 播放次数、点赞数和评论数 -->
           <div class="flex justify-center items-center space-x-8 text-sm text-gray-500">
             <div class="flex items-center">
               <PlayCircleIcon class="h-5 w-5 mr-1 text-indigo-400" />
@@ -47,27 +47,34 @@
               <span>{{ formattedCurrentTime }}</span>
               <span>{{ formattedDuration }}</span>
             </div>
-            <input type="range" min="0" :max="duration" v-model="currentTime" @input="seek"
-              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+            <div class="relative">
+              <input type="range" min="0" :max="duration" v-model="currentTime" @input="seek"
+                @mousemove="updateHoverTime" @mouseleave="hideHoverTime"
+                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-gray-500">
+              <div v-if="showHoverTime"
+                class="absolute top-[-25px] text-xs bg-gray-800 text-white px-2 py-1 rounded transform -translate-x-1/2"
+                :style="{ left: hoverPosition + 'px' }">
+                {{ formattedHoverTime }}
+              </div>
+            </div>
           </div>
 
           <div class="flex justify-between items-center px-4 py-2 bg-gray-50 rounded-xl">
             <button @click="toggleLike"
-              class="flex flex-col items-center text-gray-400 hover:text-pink-500 focus:outline-none transition duration-300 ease-in-out transform hover:scale-110">
-              <component :is="isLiked ? SolidHeartIcon : HeartIcon" :class="isLiked ? 'text-pink-500' : ''"
+              class="flex flex-col items-center text-gray-400 hover:text-emerald-700 focus:outline-none transition duration-300 ease-in-out transform hover:scale-110">
+              <component :is="isLiked ? SolidHeartIcon : HeartIcon" :class="isLiked ? 'text-red-700' : ''"
                 class="h-7 w-7" />
               <span class="text-xs mt-1 font-medium">喜欢</span>
             </button>
 
-            <!-- 修改：添加到歌单按钮 -->
             <button @click="showAddToPlaylistMenu"
-              class="flex flex-col items-center text-gray-400 hover:text-indigo-500 focus:outline-none transition duration-300 ease-in-out transform hover:scale-110">
+              class="flex flex-col items-center text-gray-400 hover:text-emerald-700 focus:outline-none transition duration-300 ease-in-out transform hover:scale-110">
               <PlusCircleIcon class="h-7 w-7" />
               <span class="text-xs mt-1 font-medium">添加到歌单</span>
             </button>
 
             <button @click="showComments"
-              class="flex flex-col items-center text-gray-400 hover:text-teal-500 focus:outline-none transition duration-300 ease-in-out transform hover:scale-110">
+              class="flex flex-col items-center text-gray-400 hover:text-emerald-700 focus:outline-none transition duration-300 ease-in-out transform hover:scale-110">
               <ChatBubbleLeftIcon class="h-7 w-7" />
               <span class="text-xs mt-1 font-medium">评论</span>
             </button>
@@ -79,56 +86,57 @@
 
         <!-- 右侧：歌词 -->
         <div
-          class="lg:col-span-2 bg-gradient-to-br from-gray-50 to-white p-6 rounded-3xl shadow-lg h-[calc(100vh-10rem)] overflow-hidden">
+          class="lg:col-span-2 bg-gray-50 p-6 rounded-3xl shadow-lg h-[calc(100vh-10rem)] overflow-hidden flex flex-col">
           <h2 class="text-2xl font-bold mb-6 text-gray-800 text-center">歌词</h2>
-          <div v-if="lyrics.length"
-            class="space-y-2 overflow-y-auto h-[calc(100%-4rem)] flex flex-col items-center px-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-            <p v-for="(line, index) in lyrics" :key="index"
-              :class="{ 'text-gray-800 font-bold text-xl transform scale-105': currentLyricIndex === index }"
-              class="text-lg text-gray-600 transition-all duration-300 cursor-pointer text-center hover:text-gray-900 relative group py-2"
-              @click="seekToLyric(line.time)">
-              {{ line.text }}
-              <span
-                class="absolute left-full ml-2 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                {{ formatTime(line.time) }}
-              </span>
-            </p>
+          <div v-if="lyrics.length" ref="lyricsContainer" class="flex-1 overflow-hidden relative">
+            <div ref="lyricsWrapper" class="absolute inset-0"
+              :style="{ transform: `translateY(${lyricsTranslateY}px)` }">
+              <div v-for="(line, index) in lyrics" :key="index" ref="lyricLines"
+                class="py-2 cursor-pointer transition-all duration-300" @click="seekToLyric(line.time)">
+                <p :class="{
+                  'text-gray-800 font-bold text-xl': currentLyricIndex === index,
+                  'text-gray-400 font-semibold': currentLyricIndex !== index
+                }" class="text-lg transition-all duration-300 text-center hover:text-emerald-700 hover:scale-105">
+                  {{ line.text }}
+                </p>
+              </div>
+            </div>
           </div>
           <p v-else class="text-gray-500 italic text-center">暂无歌词</p>
         </div>
       </div>
     </div>
 
-    <!-- 新增：添加到歌单菜单 -->
+    <!-- 添加到歌单菜单 -->
     <div v-if="showPlaylistMenu" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
       <div class="bg-white rounded-2xl p-6 w-96 max-w-[90%] shadow-2xl transform transition-all duration-300 ease-out"
         :class="showPlaylistMenu ? 'scale-100 opacity-100' : 'scale-95 opacity-0'">
         <div class="flex justify-between items-center mb-6">
           <h3 class="text-xl font-bold text-gray-800">选择歌单</h3>
-          <button @click="closePlaylistMenu" class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
+          <button @click="closePlaylistMenu" class="text-gray-500 hover:text-emerald-700 transition-colors duration-200">
             <XMarkIcon class="h-6 w-6" />
           </button>
         </div>
         <ul
-          class="space-y-3 max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-indigo-300 scrollbar-track-gray-100">
+          class="space-y-3 max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
           <li v-for="playlist in userPlaylists" :key="playlist.playlist_id"
             class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
             <div class="flex items-center space-x-3">
-              <MusicalNoteIcon class="h-5 w-5 text-indigo-500" />
-              <span class="font-medium text-gray-700">{{ playlist.playlist_name }}</span>
+              <MusicalNoteIcon class="h-5 w-5 text-gray-500" />
+              <span class="font-medium text-gray-700 hover:text-emerald-700">{{ playlist.playlist_name }}</span>
             </div>
             <button @click="toggleMusicInPlaylist(playlist.playlist_id, playlist.is_added || false)"
-              class="flex items-center space-x-1 px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              class="flex items-center space-x-1 px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-700"
               :class="playlist.is_added
-                ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                : 'bg-indigo-500 text-white hover:bg-indigo-600'">
+                ? 'bg-gray-200 text-gray-700 hover:bg-gray-300 hover:text-emerald-700'
+                : 'bg-gray-500 text-white hover:bg-emerald-700'">
               <component :is="playlist.is_added ? MinusIcon : PlusIcon" class="h-4 w-4" />
               <span>{{ playlist.is_added ? '移除' : '添加' }}</span>
             </button>
           </li>
         </ul>
         <button @click="closePlaylistMenu"
-          class="mt-6 w-full bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+          class="mt-6 w-full bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 hover:text-emerald-700 transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-700">
           关闭
         </button>
       </div>
@@ -139,7 +147,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, onUnmounted, computed } from 'vue'
+import { ref, onMounted, watch, onUnmounted, computed, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { HeartIcon, PlayIcon, PauseIcon, ChatBubbleLeftIcon, PlayCircleIcon, MinusIcon, PlusCircleIcon, PlusIcon, XMarkIcon, MusicalNoteIcon } from '@heroicons/vue/24/outline'
 import { HeartIcon as SolidHeartIcon } from '@heroicons/vue/24/solid'
@@ -173,6 +181,17 @@ const formattedDuration = computed(() => formatTime(duration.value))
 const showPlaylistMenu = ref(false)
 const userPlaylists = ref<Array<{ playlist_name: string; is_added?: boolean; playlist_id: number }>>([])
 
+const lyricsContainer = ref<HTMLElement | null>(null)
+const lyricsWrapper = ref<HTMLElement | null>(null)
+const lyricLines = ref<HTMLElement[]>([])
+const lyricsTranslateY = ref(0)
+
+const showHoverTime = ref(false)
+const hoverTime = ref(0)
+const hoverPosition = ref(0)
+
+const formattedHoverTime = computed(() => formatTime(hoverTime.value))
+
 onMounted(() => {
   const id = Number(route.params.music_id)
   if (!isNaN(id)) {
@@ -182,6 +201,13 @@ onMounted(() => {
   }
 
   setupAudioEventListeners()
+
+  nextTick(() => {
+    if (lyricsContainer.value) {
+      const containerHeight = lyricsContainer.value.clientHeight
+      lyricsContainer.value.style.height = `${containerHeight}px`
+    }
+  })
 })
 
 onUnmounted(() => {
@@ -273,7 +299,22 @@ function updateCurrentLyric() {
   })
   if (newIndex !== -1 && newIndex !== currentLyricIndex.value) {
     currentLyricIndex.value = newIndex
+    scrollLyricToCenter(newIndex)
   }
+}
+
+function scrollLyricToCenter(index: number) {
+  if (!lyricsContainer.value || !lyricsWrapper.value || lyricLines.value.length === 0) return
+
+  const containerHeight = lyricsContainer.value.clientHeight
+  const lineElement = lyricLines.value[index]
+  const lineHeight = lineElement.clientHeight
+  const lineTop = lineElement.offsetTop
+
+  const halfContainerHeight = containerHeight / 2
+  const targetScrollTop = Math.max(0, lineTop - halfContainerHeight + lineHeight / 2)
+
+  lyricsTranslateY.value = -targetScrollTop
 }
 
 async function togglePlay() {
@@ -388,6 +429,27 @@ async function toggleMusicInPlaylist(playlistId: number, isAdded: boolean) {
     // 显示错误消息
     console.log('操作失败，请稍后重试')
   }
+}
+
+// 监听 lyrics 的变化，在歌词加载完成后重新计算滚动位置
+watch(lyrics, () => {
+  nextTick(() => {
+    lyricsTranslateY.value = 0 // 重置滚动位置到顶部
+    scrollLyricToCenter(currentLyricIndex.value)
+  })
+})
+
+function updateHoverTime(event: MouseEvent) {
+  const rect = (event.target as HTMLInputElement).getBoundingClientRect()
+  const x = event.clientX - rect.left
+  const percentage = x / rect.width
+  hoverTime.value = percentage * duration.value
+  hoverPosition.value = x
+  showHoverTime.value = true
+}
+
+function hideHoverTime() {
+  showHoverTime.value = false
 }
 </script>
 

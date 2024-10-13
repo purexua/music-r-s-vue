@@ -11,17 +11,17 @@
                     </div>
                     <div class="mt-4">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-semibold text-gray-900 truncate">
+                            <h3 class="text-lg font-semibold text-gray-800 truncate">
                                 {{ playlist.playlist_name }}
                             </h3>
                             <div class="flex items-center text-gray-600">
-                                <HeartIcon class="h-5 w-5 mr-1" />
-                                <span>{{ playlist.like_count }}</span>
+                                <HeartIcon class="h-5 w-5 mr-1 text-emerald-600" />
+                                <span class="text-gray-800">{{ playlist.like_count }}</span>
                             </div>
                         </div>
                         <div class="mt-2 flex flex-wrap gap-2">
                             <span v-for="(tag, index) in playlist.tags.split('-')" :key="index"
-                                class="inline-block px-2 py-1 text-xs font-semibold text-gray-700 bg-gray-200 rounded-full transition-colors duration-300 hover:bg-gray-300">
+                                class="inline-block px-2 py-1 text-xs font-semibold text-gray-700 bg-gray-200 rounded-full transition-colors duration-300 hover:bg-gray-300 hover:text-emerald-700">
                                 {{ tag.trim() }}
                             </span>
                         </div>

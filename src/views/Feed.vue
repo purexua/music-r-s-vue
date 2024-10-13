@@ -1,7 +1,9 @@
 <template>
-  <div>
-    <h1 class="text-2xl font-bold mb-4">Feed</h1>
-    <MusicPlayer v-for="(_, index) in 2" :key="index" :musicInfo="musicPlayerInfo" />
+  <div class="bg-white py-8 px-4 sm:px-6 lg:px-8">
+    <h1 class="text-2xl font-bold mb-4 text-gray-800">动态</h1>
+    <div class="space-y-6">
+      <MusicPlayer v-for="(_, index) in 2" :key="index" :musicInfo="musicPlayerInfo" />
+    </div>
   </div>
 </template>
 
