@@ -29,21 +29,28 @@
 
         <section>
             <h2 class="text-2xl font-bold mb-6">歌单音乐列表</h2>
-            <MusicCard :musicList="musicCardList" />
-            <div class="flex justify-between items-center mt-4">
-                <span class="text-sm text-gray-600">
-                    显示第 {{ startIndex }} 到 {{ endIndex }} 项，共 {{ totalCount }} 项
-                </span>
-                <div>
-                    <button @click="previousPage" :disabled="currentPage === 1"
-                        class="px-3 py-2 rounded-md bg-white border text-sm font-medium text-gray-700 mr-2 disabled:opacity-50">
-                        上一页
-                    </button>
-                    <button @click="nextPage" :disabled="!hasNextPage"
-                        class="px-3 py-2 rounded-md bg-white border text-sm font-medium text-gray-700 disabled:opacity-50">
-                        下一页
-                    </button>
+            <div v-if="totalCount > 0">
+                <div class="flex justify-between items-center mt-4">
+                    <span class="text-sm text-gray-600">
+                        显示第 {{ startIndex }} 到 {{ endIndex }} 项，共 {{ totalCount }} 项
+                    </span>
+                    <div>
+                        <button @click="previousPage" :disabled="currentPage === 1"
+                            class="px-3 py-2 rounded-md bg-white border text-sm font-medium text-gray-700 mr-2 disabled:opacity-50">
+                            上一页
+                        </button>
+                        <button @click="nextPage" :disabled="!hasNextPage"
+                            class="px-3 py-2 rounded-md bg-white border text-sm font-medium text-gray-700 disabled:opacity-50">
+                            下一页
+                        </button>
+                    </div>
                 </div>
+                <MusicCard :musicList="musicCardList" />
+            </div>
+            <div v-else class="flex flex-col items-center justify-center py-12 text-gray-500">
+                <MusicalNoteIcon class="w-16 h-16 mb-4 animate-bounce" />
+                <p class="text-xl font-medium mb-2">这个歌单还没有音乐哦</p>
+                <p class="text-sm">快去添加一些好听的歌曲吧！</p>
             </div>
         </section>
     </div>
@@ -56,7 +63,7 @@ import MusicCard from '../components/MusicCard.vue'
 import { HeartIcon } from '@heroicons/vue/24/outline'
 import { PlaylistInfo, MusicSCardInfo, DefaultPlaylistInfo } from '../types/global'
 import { getPlaylistDetail, getPlaylistMusicCardList, checkUserLikedPlaylist, likePlaylist, unlikePlaylist } from '../api/httpClient'
-
+import { MusicalNoteIcon } from '@heroicons/vue/24/outline'
 const route = useRoute()
 const playlist = ref<PlaylistInfo>(DefaultPlaylistInfo)
 const musicCardList = ref<MusicSCardInfo[]>([])

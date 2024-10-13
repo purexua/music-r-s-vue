@@ -1,42 +1,46 @@
 <template>
-    <div class="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8 mt-8">
-        <button @click="openModal"
-            class="absolute top-0 right-0 mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300">
-            创建歌单
-        </button>
-        <div v-for="playlist in playlists" :key="playlist.id"
-            class="group bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col">
-            <div class="aspect-w-1 aspect-h-1 w-full overflow-hidden relative cursor-pointer"
-                @click="openQuickview(playlist)">
-                <img :src="playlist.cover_url" :alt="playlist.playlist_name"
-                    class="h-full w-full object-cover object-center group-hover:opacity-75 transition-opacity duration-300">
-                <div
-                    class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center transition-all duration-300">
-                    <EyeIcon
-                        class="h-12 w-12 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
-            </div>
-            <div class="p-4 flex-grow flex flex-col justify-between">
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">{{ playlist.playlist_name }}</h3>
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex flex-wrap gap-2">
-                            <span v-for="(tag, index) in playlist.tags.split('-')" :key="index"
-                                class="px-2 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full">
-                                {{ tag.trim() }}
-                            </span>
-                        </div>
-                        <div class="flex items-center text-gray-600">
-                            <HeartIcon class="h-5 w-5 text-pink-500 mr-1" />
-                            <span class="text-sm">{{ formatNumber(playlist.like_count) }}</span>
-                        </div>
+    <div class="relative">
+        <div class="mb-4 flex justify-end my-4">
+            <button @click="openModal"
+                class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300">
+                创建歌单
+            </button>
+        </div>
+        <div class="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+            <div v-for="playlist in playlists" :key="playlist.id"
+                class="group bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col">
+                <div class="aspect-w-1 aspect-h-1 w-full overflow-hidden relative cursor-pointer"
+                    @click="openQuickview(playlist)">
+                    <img :src="playlist.cover_url" :alt="playlist.playlist_name"
+                        class="h-full w-full object-cover object-center group-hover:opacity-75 transition-opacity duration-300">
+                    <div
+                        class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center transition-all duration-300">
+                        <EyeIcon
+                            class="h-12 w-12 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </div>
                 </div>
-                <button @click="navigateToPlaylistDetail(playlist.id)"
-                    class="w-full px-4 py-2 bg-teal-600 text-white text-sm font-medium rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-300 flex items-center justify-center">
-                    <PlayIcon class="h-5 w-5 mr-2" />
-                    歌单详情
-                </button>
+                <div class="p-4 flex-grow flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">{{ playlist.playlist_name }}</h3>
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex flex-wrap gap-2">
+                                <span v-for="(tag, index) in playlist.tags.split('-')" :key="index"
+                                    class="px-2 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full">
+                                    {{ tag.trim() }}
+                                </span>
+                            </div>
+                            <div class="flex items-center text-gray-600">
+                                <HeartIcon class="h-5 w-5 text-pink-500 mr-1" />
+                                <span class="text-sm">{{ formatNumber(playlist.like_count) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button @click="navigateToPlaylistDetail(playlist.id)"
+                        class="w-full px-4 py-2 bg-teal-600 text-white text-sm font-medium rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-300 flex items-center justify-center">
+                        <PlayIcon class="h-5 w-5 mr-2" />
+                        歌单详情
+                    </button>
+                </div>
             </div>
         </div>
     </div>

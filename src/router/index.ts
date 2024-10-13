@@ -25,6 +25,10 @@ const router = createRouter({
                     component: () => import('../views/Singer.vue'),
                 },
                 {
+                    path: 'playlist-search',
+                    component: () => import('../views/Playlist.vue'),
+                },
+                {
                     path: '/music/:music_id',
                     component: () => import('../views/MusicPlayerPage.vue')
                 },
@@ -38,7 +42,8 @@ const router = createRouter({
                     children: [
                         {
                             path: '',
-                            redirect: to => `/singer-detail/${to.params.id}/for-you`
+                            name: 'default',
+                            component: () => import('../views/SingerForYou.vue'),
                         },
                         {
                             path: 'for-you',
@@ -61,10 +66,6 @@ const router = createRouter({
                 {
                     path: '/playlist-detail/:id',
                     component: () => import('../views/PlayListDetail.vue'),
-                },
-                {
-                    path: 'playlist-search',
-                    component: () => import('../views/Playlist.vue'),
                 },
                 {
                     path: 'message',

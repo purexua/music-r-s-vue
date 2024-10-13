@@ -14,36 +14,29 @@
             <h2 class="font-semibold text-gray-900 text-3xl">{{ singerInfo.name }}</h2>
             <div class="flex items-center">
               <span class="mr-2 text-sm text-gray-600">{{ isFollowing ? '已关注' : '关注' }}</span>
-              <Switch v-model="isFollowing"
-                :class="[
-                  isFollowing ? 'bg-gray-600' : 'bg-gray-200',
-                  'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out',
-                  'hover:ring-2 hover:ring-gray-600 hover:ring-offset-2 hover:shadow-md hover:scale-105 transform transition-all'
-                ]"
-                @update:modelValue="toggleFollow">
+              <Switch v-model="isFollowing" :class="[
+                isFollowing ? 'bg-gray-600' : 'bg-gray-200',
+                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out',
+                'hover:ring-2 hover:ring-gray-600 hover:ring-offset-2 hover:shadow-md hover:scale-105 transform transition-all'
+              ]" @update:modelValue="toggleFollow">
                 <span class="sr-only">关注歌手</span>
-                <span
-                  :class="[
-                    isFollowing ? 'translate-x-5' : 'translate-x-0',
-                    'pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
-                  ]">
-                  <span
-                    :class="[
-                      isFollowing ? 'opacity-0 duration-100 ease-out' : 'opacity-100 duration-200 ease-in',
-                      'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity'
-                    ]"
-                    aria-hidden="true">
+                <span :class="[
+                  isFollowing ? 'translate-x-5' : 'translate-x-0',
+                  'pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
+                ]">
+                  <span :class="[
+                    isFollowing ? 'opacity-0 duration-100 ease-out' : 'opacity-100 duration-200 ease-in',
+                    'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity'
+                  ]" aria-hidden="true">
                     <svg class="h-3 w-3 text-gray-400" fill="none" viewBox="0 0 12 12">
                       <path d="M4 8l2-2m0 0l2-2M6 6L4 4m2 2l2 2" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                   </span>
-                  <span
-                    :class="[
-                      isFollowing ? 'opacity-100 duration-200 ease-in' : 'opacity-0 duration-100 ease-out',
-                      'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity'
-                    ]"
-                    aria-hidden="true">
+                  <span :class="[
+                    isFollowing ? 'opacity-100 duration-200 ease-in' : 'opacity-0 duration-100 ease-out',
+                    'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity'
+                  ]" aria-hidden="true">
                     <svg class="h-3 w-3 text-gray-600" fill="currentColor" viewBox="0 0 12 12">
                       <path
                         d="M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z" />
@@ -131,8 +124,8 @@ const userStore = useUserStore();
 const route = useRoute();
 const router = useRouter();
 const singerInfo = ref<SingerInfo>(DefaultSingerInfo);
-const currentTab = ref(0);
 const isFollowing = ref(false);
+const currentTab = ref(0);
 
 const tabs: NavigationItem[] = [
   { index: 0, name: '精选', href: 'for-you', icon: HeartIcon, title: 'For You' },
@@ -141,18 +134,51 @@ const tabs: NavigationItem[] = [
   { index: 3, name: 'MV', href: 'mv', icon: VideoCameraIcon, title: 'MV' },
 ];
 
+const fetchData = async (id: number) => {
+  await fetchSingerInfo(id);
+  await checkFollowStatus(id);
+};
+
+const updateCurrentTab = () => {
+  const path = route.path;
+  const tab = tabs.find(t => path.includes(t.href));
+  currentTab.value = tab ? tab.index : 0;
+};
+
+onMounted(() => {
+  const id = Number(route.params.id);
+  if (!isNaN(id)) {
+    fetchData(id);
+    updateCurrentTab();
+  } else {
+    router.push({ path: '/error/404' });
+  }
+});
+
+watch(() => route.fullPath, () => {
+  const id = Number(route.params.id);
+  if (!isNaN(id)) {
+    fetchData(id);
+    updateCurrentTab();
+  }
+});
+
+const changeTab = (index: number) => {
+  currentTab.value = index;
+  const singerId = route.params.id;
+  router.push(`/singer-detail/${singerId}/${tabs[index].href}`);
+};
+
 const toggleFollow = async (newValue: boolean) => {
   const userId = userStore.userId;
   const singerId = Number(route.params.id);
-  
+
   try {
     if (newValue) {
-      // 关注歌手
       await followSinger(userId, singerId);
       singerInfo.value.followers_count++;
       console.log('关注歌手成功');
     } else {
-      // 取消关注歌手
       await unfollowSinger(userId, singerId);
       singerInfo.value.followers_count--;
       console.log('取消关注歌手成功');
@@ -160,7 +186,6 @@ const toggleFollow = async (newValue: boolean) => {
     isFollowing.value = newValue;
   } catch (error) {
     console.error(`${newValue ? '关注' : '取消关注'}歌手失败:`, error);
-    // 操作失败时，恢复原来的状态
     isFollowing.value = !newValue;
   }
 };
@@ -176,12 +201,6 @@ const fetchSingerInfo = async (id: number) => {
   } catch (error) {
     console.error('获取歌手信息出错:', error);
   }
-};
-
-const changeTab = (index: number) => {
-  currentTab.value = index;
-  const singerId = route.params.id;
-  router.push(`/singer-detail/${singerId}/${tabs[index].href}`);
 };
 
 const formatDate = (dateString: string) => {
@@ -207,23 +226,4 @@ const checkFollowStatus = async (id: number) => {
     console.error('检查关注状态出错:', error);
   }
 };
-
-onMounted(() => {
-  const id = route.params.id;
-  if (id && !isNaN(Number(id))) {
-    fetchSingerInfo(Number(id));
-  } else {
-    // 无效的歌手 ID
-    router.push({
-      path: '/error/404'
-    });
-  }
-  checkFollowStatus(Number(id));
-});
-
-watch(() => route.params.id, (newId) => {
-  if (newId && !isNaN(Number(newId))) {
-    fetchSingerInfo(Number(newId));
-  }
-});
 </script>
