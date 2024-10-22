@@ -151,7 +151,7 @@ const fetchSingers = async (isLoadMore = false) => {
             if (isLoadMore) {
                 singerList.value = [...singerList.value, ...response.data.singer_info_list];
             } else {
-                singerList.value = response.data.singer_info_list;
+                singerList.value = response.data.singer_list;
             }
             hasMore.value = response.data.has_more;
         } else {

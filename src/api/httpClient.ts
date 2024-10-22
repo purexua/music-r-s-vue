@@ -36,13 +36,15 @@ userClient.interceptors.response.use(
             try {
                 const refreshResponse = await refreshToken(Number(userId));
                 if (refreshResponse.status === 200 && refreshResponse.data.code === 0) {
-                    const newToken = refreshResponse.data.data;
-                    localStorage.setItem('token', newToken);
-                    originalRequest.headers['Authorization'] = `${newToken}`;
+                    const { access_token, refresh_token } = refreshResponse.data.data;
+                    localStorage.setItem('token', access_token);
+                    localStorage.setItem('refresh_token', refresh_token);
+                    originalRequest.headers['Authorization'] = `${access_token}`;
                     return userClient(originalRequest);
                 }
             } catch (refreshError) {
                 console.error('刷新 token 失败', refreshError);
+                // 可以在这里添加登出逻辑
                 return Promise.reject(refreshError);
             }
         }
@@ -933,3 +935,311 @@ export async function GetUserCreatedPlaylistNameAndMusicIsAdded(userId: number, 
         throw error;
     }
 }
+
+/**
+ * 获取最新的音乐
+ * @param limit 限制数量
+ */
+export async function getLatestMusics(limit: number) {
+    try {
+        const response = await userClient.get('/musics/r/latest', {
+            params: { limit }
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取最新的音乐失败');
+        }
+    } catch (error) {
+        console.error('获取最新的音乐失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 获取播放量最高的音乐
+ * @param limit 限制数量
+ */
+export async function getTopPlayCountMusics(limit: number) {
+    try {
+        const response = await userClient.get('/musics/r/top-play-count', {
+            params: { limit }
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取播放量最高的音乐失败');
+        }
+    } catch (error) {
+        console.error('获取播放量最高的音乐失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 获取点赞数最高的音乐
+ * @param limit 限制数量
+ */
+export async function getTopLikeCountMusics(limit: number) {
+    try {
+        const response = await userClient.get('/musics/r/top-like-count', {
+            params: { limit }
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取点赞数最高的音乐失败');
+        }
+    } catch (error) {
+        console.error('获取点赞数最高的音乐失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 获取评论数最高的音乐
+ * @param limit 限制数量
+ */
+export async function getTopCommentCountMusics(limit: number) {
+    try {
+        const response = await userClient.get('/musics/r/top-comment-count', {
+            params: { limit }
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取评论数最高的音乐失败');
+        }
+    } catch (error) {
+        console.error('获取评论数最高的音乐失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 获取最新的专辑
+ * @param limit 限制数量
+ */
+export async function getLatestAlbums(limit: number) {
+    try {
+        const response = await userClient.get('/albums/r/latest', {
+            params: { limit }
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取最新的专辑失败');
+        }
+    } catch (error) {
+        console.error('获取最新的专辑失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 获取点赞数最高的专辑
+ * @param limit 限制数量
+ */
+export async function getTopLikeCountAlbums(limit: number) {
+    try {
+        const response = await userClient.get('/albums/r/top-like-count', {
+            params: { limit }
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取点赞数最高的专辑失败');
+        }
+    } catch (error) {
+        console.error('获取点赞数最高的专辑失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 获取最新的歌单
+ * @param limit 限制数量
+ */
+export async function getLatestPlaylists(limit: number) {
+    try {
+        const response = await userClient.get('/playlists/r/latest', {
+            params: { limit }
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取最新的歌单失败');
+        }
+    } catch (error) {
+        console.error('获取最新的歌单失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 获取点赞数最高的歌单
+ * @param limit 限制数量
+ */
+export async function getTopLikeCountPlaylists(limit: number) {
+    try {
+        const response = await userClient.get('/playlists/r/top-like-count', {
+            params: { limit }
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取点赞数最高的歌单失败');
+        }
+    } catch (error) {
+        console.error('获取点赞数最高的歌单失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 推荐函数之用户播放音乐
+ * @param userId 用户ID
+ * @param musicId 音乐ID
+ */
+export async function recommendFunctionUserPlayMusic(userId: number, musicId: number) {
+    try {
+        const response = await userClient.post('/musics/rdc/user-play-music', {
+            user_id: userId,
+            music_id: musicId
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '推荐函数之用户播放音乐数据收集失败');
+        }
+    } catch (error) {
+        console.error('推荐函数之用户播放音乐数据收集失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 推荐函数之用户浏览歌单
+ * @param userId 用户ID
+ * @param playlistId 歌单ID
+ */
+export async function recommendFunctionUserBrowsePlaylist(userId: number, playlistId: number) {
+    try {
+        const response = await userClient.post('/playlists/rdc/user-browse-playlist', {
+            user_id: userId,
+            playlist_id: playlistId
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '推荐函数之用户浏览歌单数据收集失败');
+        }
+    } catch (error) {
+        console.error('推荐函数之用户浏览歌单数据收集失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 推荐函数之用户浏览专辑
+ * @param userId 用户ID
+ * @param albumId 专辑ID
+ */
+export async function recommendFunctionUserBrowseAlbum(userId: number, albumId: number) {
+    try {
+        const response = await userClient.post('/albums/rdc/user-browse-album', {
+            user_id: userId,
+            album_id: albumId
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '推荐函数之用户浏览专辑数据收集失败');
+        }
+    } catch (error) {
+        console.error('推荐函数之用户浏览专辑数据收集失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 推荐函数之用户浏览歌手
+ * @param userId 用户ID
+ * @param singerId 歌手ID
+ */
+export async function recommendFunctionUserBrowseSinger(userId: number, singerId: number) {
+    try {
+        const response = await userClient.post('/singers/rdc/user-browse-singer', {
+            user_id: userId,
+            singer_id: singerId
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '推荐函数之用户浏览歌手数据收集失败');
+        }
+    } catch (error) {
+        console.error('推荐函数之用户浏览歌手数据收集失败', error);
+        throw error;
+    }
+}
+
+// ... 现有代码 ...
+
+/**
+ * 推荐函数之构建用户画像 - music
+ * @param userId 用户ID
+ */
+export async function recommendFunctionBuildUserProfileByMusic(userId: number) {
+    try {
+        const response = await userClient.post('/musics/rb', {
+            user_id: userId
+        });
+        if (response.data.code !== 0) {
+            throw new Error(response.data.message || '推荐函数之构建用户画像失败');
+        }
+    } catch (error) {
+        console.error('推荐函数之构建用户画像失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 推荐函数之构建用户画像 - singer
+ * @param userId 用户ID
+ */
+export async function recommendFunctionBuildUserProfileBySinger(userId: number) {
+    try {
+        const response = await userClient.post('/singers/rb', {
+            user_id: userId
+        });
+        if (response.data.code !== 0) {
+            throw new Error(response.data.message || '推荐函数之构建用户画像失败');
+        }
+    } catch (error) {
+        console.error('推荐函数之构建用户画像失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 获取推荐的音乐
+ * @param userId 用户ID
+ * @param limit 限制数量
+ */
+export async function getRecommendedMusic(userId: number, limit: number) {
+    try {
+        const response = await userClient.get(`/musics/feeds/${userId}`, {
+            params: { limit }
+        });
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '获取推荐的音乐失败');
+        }
+    } catch (error) {
+        console.error('获取推荐的音乐失败', error);
+        throw error;
+    }
+}
+

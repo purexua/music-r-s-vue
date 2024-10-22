@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts" name="AlbumList">
-import { AlbumInfo } from '../types/global';
+import { AlbumInfo } from '../../types/global';
 import { useRouter } from 'vue-router';
 
 const props = defineProps<{

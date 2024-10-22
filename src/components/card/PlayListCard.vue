@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import { defineProps } from 'vue'
-import { PlaylistInfo } from '../types/global';
+import { PlaylistInfo } from '../../types/global';
 import { HeartIcon } from '@heroicons/vue/24/solid'
 
 const props = defineProps<{

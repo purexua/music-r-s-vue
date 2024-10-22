@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import PlayListList from '../components/PlayListList.vue'
+import PlayListList from '../components/list/PlayListList.vue'
 </script>
 
 <style scoped>

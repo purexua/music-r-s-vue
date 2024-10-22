@@ -28,7 +28,7 @@ import { ref, onMounted, computed } from 'vue';
 import { MusicSCardInfo } from '../types/global';
 import { useRoute } from 'vue-router';
 import { getSingerMusicCardInfoById } from '../api/httpClient';
-import MusicCard from '../components/MusicCard.vue';
+import MusicCard from '../components/card/MusicCard.vue';
 import { RectangleStackIcon } from '@heroicons/vue/24/outline'
 
 const route = useRoute();

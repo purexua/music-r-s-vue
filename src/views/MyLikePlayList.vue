@@ -30,11 +30,13 @@ import { useRouter } from 'vue-router';
 import { PlaylistInfo } from '../types/global';
 import { getUserLikedPlaylistIdList, getPlaylistInfoListByIdList } from '../api/httpClient';
 import { useUserStore } from '../store/user';
-import PlayListCard from '../components/PlayListCard.vue';
+import PlayListCard from '../components/card/PlayListCard.vue';
 import { MusicalNoteIcon } from '@heroicons/vue/24/outline';
 
 const router = useRouter();
 const userStore = useUserStore();
+
+const userId = userStore.getUserId()
 const likedPlaylists = ref<PlaylistInfo[]>([]);
 
 const navigateToDiscoverPlaylists = () => {
@@ -43,7 +45,6 @@ const navigateToDiscoverPlaylists = () => {
 
 const fetchLikedPlaylists = async () => {
     try {
-        const userId = userStore.userId;
         const likeResponse = await getUserLikedPlaylistIdList(userId);
         const playlistIds = likeResponse.data.playlist_id_list || [];
         if (playlistIds.length > 0) {

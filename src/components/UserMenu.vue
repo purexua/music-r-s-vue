@@ -5,11 +5,9 @@
         class="relative flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2">
         <span class="absolute -inset-1.5" />
         <span class="sr-only">打开用户菜单</span>
-        <div
-          v-if="userStore.userInfo.avatar_url !== '' && userStore.userInfo.avatar_url !== null && userStore.userInfo.avatar_url !== undefined">
-          <img :src="userStore.userInfo.avatar_url" alt="用户头像" class="h-8 w-8 rounded-full object-cover" />
+        <div>
+          <img :src="userInfo?.avatar_url" alt="用户头像" class="h-8 w-8 rounded-full object-cover" />
         </div>
-        <UserCircleIcon v-else class="h-8 w-8 text-gray-500" aria-hidden="true" />
       </MenuButton>
     </div>
     <transition enter-active-class="transition ease-out duration-200" enter-from-class="transform opacity-0 scale-95"
@@ -35,21 +33,31 @@
 </template>
 
 <script setup lang="ts" name="UserMenu">
+import { ref, onMounted } from 'vue'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../store/user'
 import { NavigationItem } from '../types/global'
-import { UserCircleIcon } from '@heroicons/vue/24/outline'
-
+import { getUserInfo } from '../api/httpClient'
+import { UserInfo } from '../types/global'
 const router = useRouter()
 const userStore = useUserStore()
+
+const userInfo = ref<UserInfo>()
+
+onMounted(async () => {
+  const res = await getUserInfo(userStore.getUserId())
+  if (res.code === 0) {
+    userInfo.value = res.data.user_info
+  }
+})
 
 const handleClick = (href: string, close: () => void) => {
   // 单独判断 logout
   if (href === '/logout') {
     close();
     userStore.logout();
-    router.push('/feed');
+    router.push('/top-list');
     return;
   }
   close();

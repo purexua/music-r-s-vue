@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { defineProps } from 'vue'
-import { MusicSCardInfo } from '../types/global';
+import { MusicSCardInfo } from '../../types/global';
 
 const props = defineProps<{
   musicList: MusicSCardInfo[]

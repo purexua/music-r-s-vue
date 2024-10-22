@@ -53,13 +53,13 @@
       </div>
       <div class="border-t border-gray-200 pb-3 pt-4">
         <div class="flex items-center px-4">
-          <div class="flex-shrink-0" v-if="userStore.userInfo.avatar_url !== '' && userStore.userInfo.avatar_url !== null && userStore.userInfo.avatar_url !== undefined">  
-            <img class="h-10 w-10 rounded-full" :src="userStore.userInfo.avatar_url" alt="" /> 
+          <div class="flex-shrink-0">
+            <img v-if="userInfo?.avatar_url" class="h-10 w-10 rounded-full" :src="userInfo.avatar_url" alt="用户头像" />
+            <UserCircleIcon v-else class="h-10 w-10 text-gray-300" aria-hidden="true" />
           </div>
-          <UserCircleIcon v-else class="h-10 w-10 text-gray-300" aria-hidden="true" />
           <div class="ml-3">
-            <div class="text-base font-medium text-gray-800">{{ userStore.userInfo.username }}</div>
-            <div class="text-sm font-medium text-gray-500">{{ userStore.userInfo.email }}</div>
+            <div class="text-base font-medium text-gray-800">{{ userInfo?.username || '未登录' }}</div>
+            <div class="text-sm font-medium text-gray-500">{{ userInfo?.email || '请登录以查看邮箱' }}</div>
           </div>
           <NotificationMenu :notificationNavigation="notificationNavigation" className="ml-auto"
             buttonClassName="flex-shrink-0" />
@@ -73,15 +73,24 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { RouterLink, useRoute } from 'vue-router'
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import NotificationMenu from './NotificationMenu.vue'
 import UserMenu from './UserMenu.vue'
 import { useUserStore } from '../store/user'
 import { UserCircleIcon } from '@heroicons/vue/24/outline'
-import { NavigationItem } from '../types/global'
-
+import { NavigationItem, UserInfo } from '../types/global'
+import { getUserInfo } from '../api/httpClient'
 const route = useRoute()
 const userStore = useUserStore()
+
+const userInfo = ref<UserInfo>()
+
+onMounted(async () => {
+  const res = await getUserInfo(userStore.getUserId())
+  if (res.code === 0) {
+    userInfo.value = res.data.user_info
+  }
+})
 
 const props = defineProps<{
   navigation: Array<NavigationItem>;
@@ -102,3 +111,4 @@ const activeNavigation = computed(() => {
 })
 
 </script>
+

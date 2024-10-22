@@ -5,36 +5,27 @@
         <main class="mx-auto px-4 py-2 sm:px-6 lg:px-8">
             <RouterView />
         </main>
-
     </div>
 </template>
 
 <script setup lang="ts" name="Index">
+import { ref, onMounted } from 'vue'
 import NavBar from '../components/NavBar.vue'
 import { EnvelopeIcon, HandThumbUpIcon, ChatBubbleLeftRightIcon } from '@heroicons/vue/24/outline'
-import { useUserStore } from '../store/user'
-import { onMounted } from 'vue'
-import { getUserInfo } from '../api/httpClient'
 import { NavigationItem, UserInfo } from '../types/global'
+import { getUserInfo } from '../api/httpClient'
+import { useUserStore } from '../store/user'
+
 
 const userStore = useUserStore()
 
+const userInfo = ref<UserInfo>()
+
 onMounted(async () => {
-    try {
-        const userId = userStore.userId
-        if (userId) {
-            const result = await getUserInfo(userId)
-            if (result.code === 0) {
-                let info: UserInfo = result.data.user_info
-                localStorage.setItem('user_info', JSON.stringify(info))
-                userStore.setUserInfo(info)
-            } else {
-                console.error('获取用户信息失败:', result.msg)
-            }
-        }
-    } catch (error) {
-        console.error('获取或设置用户信息失败', error)
-    }
+  const res = await getUserInfo(userStore.getUserId())
+  if (res.code === 0) {
+    userInfo.value = res.data.user_info
+  }
 })
 
 const navigation: NavigationItem[] = [

@@ -28,7 +28,7 @@ import { ref, onMounted, computed } from 'vue';
 import { AlbumInfo } from '../types/global';
 import { useRoute } from 'vue-router';
 import { getSingerAlbumInfoById } from '../api/httpClient';
-import AlbumCard from '../components/AlbumCard.vue';
+import AlbumCard from '../components/card/AlbumCard.vue';
 import { RectangleStackIcon } from '@heroicons/vue/24/outline'
 const route = useRoute();
 

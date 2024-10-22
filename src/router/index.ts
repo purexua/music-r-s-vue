@@ -26,7 +26,7 @@ const router = createRouter({
                 },
                 {
                     path: 'playlist-search',
-                    component: () => import('../views/Playlist.vue'),
+                    component: () => import('../views/PlaylistSearch.vue'),
                 },
                 {
                     path: '/music/:music_id',
@@ -132,10 +132,6 @@ const router = createRouter({
         {
             path: '/register',
             component: () => import('../components/Register.vue'),
-        },
-        {
-            path: '/test',
-            component: () => import('../components/Test.vue'),
         },
         {
             path: '/error/:errorCode',

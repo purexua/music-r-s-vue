@@ -27,7 +27,7 @@
 <script setup lang="ts" name="MyLikeAlbum">
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import AlbumCard from '../components/AlbumCard.vue';
+import AlbumCard from '../components/card/AlbumCard.vue';
 import { AlbumInfo } from '../types/global';
 import { getUserLikedAlbumIdList, getAlbumInfoByIdList } from '../api/httpClient';
 import { useUserStore } from '../store/user';
@@ -35,7 +35,9 @@ import { MusicalNoteIcon } from '@heroicons/vue/24/outline';
 
 const router = useRouter();
 const userStore = useUserStore();
+
 const likedAlbums = ref<AlbumInfo[]>([]);
+const userId = userStore.getUserId()
 
 const navigateToDiscoverAlbums = () => {
     router.push('/album-search');
@@ -43,7 +45,6 @@ const navigateToDiscoverAlbums = () => {
 
 const fetchLikedAlbums = async () => {
     try {
-        const userId = userStore.userId;
         const likeResponse = await getUserLikedAlbumIdList(userId);
         const albumIds = likeResponse.data.album_id_list;
         if (albumIds.length > 0) {

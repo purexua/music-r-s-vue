@@ -43,9 +43,11 @@ import type { SingerInfo } from '../types/global'
 import { getUserFollowedSingerIdList, getSingerInfoByIdList } from '../api/httpClient'
 import { useUserStore } from '../store/user' // 假设您有一个用户存储
 import { HeartIcon } from '@heroicons/vue/24/outline'
+
 const router = useRouter()
 const userStore = useUserStore()
 
+const userId = userStore.getUserId()
 const singers = ref<SingerInfo[]>([])
 
 const navigateToSingerDetail = (singerId: number) => {
@@ -58,7 +60,6 @@ const navigateToDiscoverSingers = () => {
 
 const fetchSingers = async () => {
     try {
-        const userId = userStore.userId // 假设用户ID存储在用户存储中
         const followResponse = await getUserFollowedSingerIdList(userId)
         const singerIds = followResponse.data.singer_id_list
         if (singerIds.length > 0) {

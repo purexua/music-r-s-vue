@@ -23,7 +23,7 @@
 
 <script setup lang="ts" name="AlbumCard">
 import { defineProps } from 'vue'
-import { AlbumInfo } from '../types/global'
+import { AlbumInfo } from '../../types/global'
 
 const props = defineProps<{
   albumList: AlbumInfo[]

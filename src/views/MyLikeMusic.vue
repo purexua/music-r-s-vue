@@ -27,7 +27,7 @@
 <script setup lang="ts" name="MyLikeMusic">
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import MusicCard from '../components/MusicCard.vue';
+import MusicCard from '../components/card/MusicCard.vue';
 import { MusicSCardInfo } from '../types/global';
 import { getUserLikedMusicIdList, getMusicCardInfoByIdList } from '../api/httpClient';
 import { useUserStore } from '../store/user';
@@ -35,6 +35,8 @@ import { MusicalNoteIcon } from '@heroicons/vue/24/outline';
 
 const router = useRouter();
 const userStore = useUserStore();
+
+const userId = userStore.getUserId()
 const likedMusic = ref<MusicSCardInfo[]>([]);
 
 const navigateToDiscoverMusic = () => {
@@ -43,7 +45,6 @@ const navigateToDiscoverMusic = () => {
 
 const fetchLikedMusic = async () => {
     try {
-        const userId = userStore.userId;
         const likeResponse = await getUserLikedMusicIdList(userId);
         const musicIds = likeResponse.data.music_id_list;
         console.log(musicIds);

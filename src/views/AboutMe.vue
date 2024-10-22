@@ -2,27 +2,27 @@
     <div class="bg-white">
       <!-- 封面图部分 -->
       <div aria-hidden="true" class="relative">
-        <img :src="userInfo.cover_url" alt="用户封面" class="h-96 w-full object-cover object-center" />
+        <img :src="userInfo?.cover_url" alt="用户封面" class="h-96 w-full object-cover object-center" />
         <div class="absolute inset-0 bg-gradient-to-t from-white" />
       </div>
   
       <!-- 个人信息部分 -->
       <div class="relative mx-auto -mt-32 max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex items-start space-x-8">
-          <img class="aspect-square w-40 flex-none rounded-2xl object-cover shadow-lg" :src="userInfo.avatar_url"
-            :alt="userInfo.username" />
+          <img class="aspect-square w-40 flex-none rounded-2xl object-cover shadow-lg" :src="userInfo?.avatar_url"
+            :alt="userInfo?.username" />
           <div class="max-w-xl flex-auto">
-            <h3 class="text-3xl font-semibold leading-8 tracking-tight text-gray-800">{{ userInfo.username }}</h3>
-            <p class="mt-2 text-xl leading-7 text-gray-600">{{ userInfo.gender }} · {{ userInfo.age }}岁</p>
-            <p class="mt-4 text-base leading-7 text-gray-600">{{ userInfo.description }}</p>
+            <h3 class="text-3xl font-semibold leading-8 tracking-tight text-gray-800">{{ userInfo?.username }}</h3>
+            <p class="mt-2 text-xl leading-7 text-gray-600">{{ userInfo?.gender }} · {{ userInfo?.age }}岁</p>
+            <p class="mt-4 text-base leading-7 text-gray-600">{{ userInfo?.description }}</p>
             <div class="mt-6 flex flex-wrap gap-4 text-sm text-gray-500">
               <p class="flex items-center">
                 <CakeIcon class="h-5 w-5 mr-2 text-gray-400" />
-                {{ userInfo.birthday ? formatDate(userInfo.birthday) : '未知' }}
+                {{ userInfo?.birthday ? formatDate(userInfo.birthday) : '未知' }}
               </p>
               <p class="flex items-center">
                 <EnvelopeIcon class="h-5 w-5 mr-2 text-gray-400" />
-                {{ userInfo.email || '未知' }}
+                {{ userInfo?.email || '未知' }}
               </p>
             </div>
             <ul role="list" class="mt-6 flex gap-x-6">
@@ -73,7 +73,7 @@
   </template>
 
 <script setup lang="ts" name="AboutMe">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue' 
 import { useRoute } from 'vue-router'
 import { RouterView, RouterLink } from 'vue-router'
 import { UserInfo } from '../types/global'
@@ -81,12 +81,20 @@ import { useUserStore } from '../store/user'
 import { CakeIcon, EnvelopeIcon } from '@heroicons/vue/24/outline'
 import { NavigationItem } from '../types/global'
 import { HeartIcon, MusicalNoteIcon, UserGroupIcon, Cog6ToothIcon } from '@heroicons/vue/24/outline'
+import { getUserInfo } from '../api/httpClient'
 
 const userStore = useUserStore()
 
-const userInfo = ref<UserInfo>({
-    ...userStore.userInfo
+const userInfo = ref<UserInfo>()
+
+onMounted(async () => {
+  const res = await getUserInfo(userStore.getUserId())
+  if (res.code === 0) {
+    userInfo.value = res.data.user_info as UserInfo
+  }
 })
+
+
 
 const route = useRoute()
 const selectedTab = ref(route.path)

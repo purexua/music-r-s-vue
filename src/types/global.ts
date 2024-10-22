@@ -24,13 +24,6 @@ export interface SingerInfo {
     description: string;
 }
 
-export interface SingerSimpleInfo {
-    id: number;
-    avatar_url: string;
-    name: string;
-    main_genre: string;
-}
-
 export interface MusicInfo {
     id: number;
     cover_url: string;
@@ -45,6 +38,9 @@ export interface MusicInfo {
     like_count: number;
     comment_count: number;
     lyrics_url: string;
+    emotions: string;
+    genres: string;
+    instruments: string;
 }
 
 export interface MusicSCardInfo {
@@ -53,20 +49,6 @@ export interface MusicSCardInfo {
     title: string;
     singer_name: string;
     album_name: string;
-}
-
-export interface MusicPlayerInfo {
-    id: number;
-    cover_url: string;
-    title: string;
-    singer_id: number;
-    singer_name: string;
-    album_id: number;
-    album_name: string;
-    music_url: string;
-    play_count: number;
-    like_count: number;
-    comment_count: number;
 }
 
 export interface AlbumInfo {
@@ -98,68 +80,3 @@ export interface PlaylistInfo {
     user_id: number;
     creation_date: string;
 }
-
-export const DefaultUserInfo: UserInfo = {
-    id: -1,
-    username: '',
-    avatar_url: '',
-    cover_url: '',
-    age: 0,
-    gender: '',
-    birthday: '',
-    email: '',
-    description: ''
-}
-
-export const DefaultSingerInfo: SingerInfo = {
-    id: -1,
-    avatar_url: '',
-    name: '',
-    stage_name: '',
-    gender: '',
-    birthday: '',
-    origin_country: '',
-    main_genre: '',
-    debut_year: '',
-    followers_count: 0,
-    description: ''
-}
-
-export const DefaultMusicInfo: MusicInfo = {
-    id: -1,
-    cover_url: '',
-    title: '',
-    singer_id: -1,
-    singer_name: '',
-    album_id: -1,
-    album_name: '',
-    release_date: '',
-    music_url: '',
-    play_count: 0,
-    like_count: 0,
-    comment_count: 0,
-    lyrics_url: ''
-}
-
-export const DefaultAlbumInfo: AlbumInfo = {
-    id: -1,
-    cover_url: '',
-    album_name: '',
-    singer_id: -1,
-    singer_name: '',
-    release_date: '',
-    like_count: 0,
-    description: ''
-}
-
-export const DefaultPlaylistInfo: PlaylistInfo = {
-    id: 0,
-    cover_url: '',
-    playlist_name: '',
-    tags: '',
-    like_count: 0,
-    description: '',
-    user_id: 0,
-    creation_date: ''
-}
-

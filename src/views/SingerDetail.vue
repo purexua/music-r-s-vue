@@ -2,12 +2,12 @@
   <section class="isolate overflow-hidden bg-white px-6 lg:px-8" v-if="singerInfo">
     <div class="relative mx-auto max-w-2xl py-24 sm:py-32 lg:max-w-4xl">
       <div
-        class="absolute left-1/2 top-0 -z-10 h-[50rem] w-[90rem] -translate-x-1/2 bg-[radial-gradient(50%_100%_at_top,theme(colors.emerald.100),white)] opacity-20 lg:left-36" />
+          class="absolute left-1/2 top-0 -z-10 h-[50rem] w-[90rem] -translate-x-1/2 bg-[radial-gradient(50%_100%_at_top,theme(colors.emerald.100),white)] opacity-20 lg:left-36"/>
       <div
-        class="absolute inset-y-0 right-1/2 -z-10 mr-12 w-[150vw] origin-bottom-left skew-x-[-30deg] bg-white shadow-xl shadow-emerald-600/10 ring-1 ring-emerald-50 sm:mr-20 md:mr-0 lg:right-full lg:-mr-36 lg:origin-center" />
+          class="absolute inset-y-0 right-1/2 -z-10 mr-12 w-[150vw] origin-bottom-left skew-x-[-30deg] bg-white shadow-xl shadow-emerald-600/10 ring-1 ring-emerald-50 sm:mr-20 md:mr-0 lg:right-full lg:-mr-36 lg:origin-center"/>
       <figure class="grid grid-cols-1 items-center gap-x-6 gap-y-8 lg:gap-x-10">
         <div class="col-end-1 w-16 lg:row-span-4 lg:w-72">
-          <img class="rounded-xl bg-emerald-50 lg:rounded-3xl" :src="singerInfo.avatar_url" :alt="singerInfo.name" />
+          <img class="rounded-xl bg-emerald-50 lg:rounded-3xl" :src="singerInfo.avatar_url" :alt="singerInfo.name"/>
         </div>
         <figcaption class="text-base lg:col-start-1 lg:row-start-3">
           <div class="flex items-center justify-between mb-4">
@@ -30,7 +30,7 @@
                   ]" aria-hidden="true">
                     <svg class="h-3 w-3 text-gray-400" fill="none" viewBox="0 0 12 12">
                       <path d="M4 8l2-2m0 0l2-2M6 6L4 4m2 2l2 2" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round" />
+                            stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                   </span>
                   <span :class="[
@@ -39,7 +39,7 @@
                   ]" aria-hidden="true">
                     <svg class="h-3 w-3 text-emerald-600" fill="currentColor" viewBox="0 0 12 12">
                       <path
-                        d="M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z" />
+                          d="M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z"/>
                     </svg>
                   </span>
                 </span>
@@ -85,8 +85,8 @@
     <div class="sm:hidden">
       <label for="tabs" class="sr-only">选择标签</label>
       <select id="tabs" name="tabs" v-model="currentTab"
-        class="block w-full rounded-md border-gray-300 focus:border-emerald-500 focus:ring-emerald-500"
-        @change="(event) => changeTab(Number((event.target as HTMLSelectElement).value))">
+              class="block w-full rounded-md border-gray-300 focus:border-emerald-500 focus:ring-emerald-500"
+              @change="(event) => changeTab(Number((event.target as HTMLSelectElement).value))">
         <option v-for="tab in tabs" :key="tab.name" :value="tab.index">{{ tab.name }}</option>
       </select>
     </div>
@@ -94,11 +94,11 @@
       <div class="border-b border-gray-200">
         <nav class="-mb-px flex space-x-8" aria-label="Tabs">
           <a v-for="tab in tabs" :key="tab.name" :href="tab.href"
-            :class="[currentTab === tab.index ? 'border-emerald-500 text-emerald-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-emerald-700', 'group inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium transition-colors duration-200']"
-            :aria-current="currentTab === tab.index ? 'page' : undefined" @click.prevent="changeTab(tab.index)">
+             :class="[currentTab === tab.index ? 'border-emerald-500 text-emerald-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-emerald-700', 'group inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium transition-colors duration-200']"
+             :aria-current="currentTab === tab.index ? 'page' : undefined" @click.prevent="changeTab(tab.index)">
             <component :is="tab.icon"
-              :class="[currentTab === tab.index ? 'text-emerald-500' : 'text-gray-400 group-hover:text-emerald-500', '-ml-0.5 mr-2 h-5 w-5']"
-              aria-hidden="true" />
+                       :class="[currentTab === tab.index ? 'text-emerald-500' : 'text-gray-400 group-hover:text-emerald-500', '-ml-0.5 mr-2 h-5 w-5']"
+                       aria-hidden="true"/>
             <span>{{ tab.name }}</span>
           </a>
         </nav>
@@ -107,32 +107,40 @@
   </div>
 
   <div class="sm:mx-auto min-[1024px]:mx-32">
-    <RouterView />
+    <RouterView/>
   </div>
 </template>
 
 <script setup lang="ts" name="SingerDetail">
-import { ref, onMounted, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { HeartIcon, MusicalNoteIcon, RectangleStackIcon, VideoCameraIcon } from '@heroicons/vue/20/solid';
-import { Switch } from '@headlessui/vue';
-import { NavigationItem, SingerInfo, DefaultSingerInfo } from '../types/global';
-import { getSingerInfo, checkUserFollowingSinger, followSinger, unfollowSinger } from '../api/httpClient';
-import { useUserStore } from '../store/user';
+import {ref, onMounted, watch} from 'vue';
+import {useRoute, useRouter} from 'vue-router';
+import {HeartIcon, MusicalNoteIcon, RectangleStackIcon, VideoCameraIcon} from '@heroicons/vue/20/solid';
+import {Switch} from '@headlessui/vue';
+import {NavigationItem, SingerInfo} from '../types/global';
+import {
+  getSingerInfo,
+  checkUserFollowingSinger,
+  followSinger,
+  unfollowSinger,
+  recommendFunctionUserBrowseSinger
+} from '../api/httpClient';
+import {useUserStore} from '../store/user';
 
 const userStore = useUserStore();
 
 const route = useRoute();
 const router = useRouter();
-const singerInfo = ref<SingerInfo>(DefaultSingerInfo);
+
+const userId = userStore.getUserId()
+const singerInfo = ref<SingerInfo>();
 const isFollowing = ref(false);
 const currentTab = ref(0);
 
 const tabs: NavigationItem[] = [
-  { index: 0, name: '精选', href: 'for-you', icon: HeartIcon, title: 'For You' },
-  { index: 1, name: '歌曲', href: 'music', icon: MusicalNoteIcon, title: 'Songs' },
-  { index: 2, name: '专辑', href: 'albums', icon: RectangleStackIcon, title: 'Albums' },
-  { index: 3, name: 'MV', href: 'mv', icon: VideoCameraIcon, title: 'MV' },
+  {index: 0, name: '精选', href: 'for-you', icon: HeartIcon, title: 'For You'},
+  {index: 1, name: '歌曲', href: 'music', icon: MusicalNoteIcon, title: 'Songs'},
+  {index: 2, name: '专辑', href: 'albums', icon: RectangleStackIcon, title: 'Albums'},
+  {index: 3, name: 'MV', href: 'mv', icon: VideoCameraIcon, title: 'MV'},
 ];
 
 const fetchData = async (id: number) => {
@@ -151,8 +159,9 @@ onMounted(() => {
   if (!isNaN(id)) {
     fetchData(id);
     updateCurrentTab();
+    recommendFunctionUserBrowseSinger(userId, id);
   } else {
-    router.push({ path: '/error/404' });
+    router.push({path: '/error/404'});
   }
 });
 
@@ -171,17 +180,20 @@ const changeTab = (index: number) => {
 };
 
 const toggleFollow = async (newValue: boolean) => {
-  const userId = userStore.userId;
   const singerId = Number(route.params.id);
 
   try {
     if (newValue) {
       await followSinger(userId, singerId);
-      singerInfo.value.followers_count++;
+      if (singerInfo.value !== undefined) {
+        singerInfo.value.followers_count++;
+      }
       console.log('关注歌手成功');
     } else {
       await unfollowSinger(userId, singerId);
-      singerInfo.value.followers_count--;
+      if (singerInfo.value !== undefined) {
+        singerInfo.value.followers_count--;
+      }
       console.log('取消关注歌手成功');
     }
     isFollowing.value = newValue;
@@ -195,7 +207,7 @@ const fetchSingerInfo = async (id: number) => {
   try {
     const getSingerInfoResult = await getSingerInfo(id);
     if (getSingerInfoResult.code === 0) {
-      singerInfo.value = getSingerInfoResult.data.singer_info;
+      singerInfo.value = getSingerInfoResult.data.singer_info as SingerInfo;
     } else {
       console.error('获取歌手信息失败:', getSingerInfoResult.msg);
     }
@@ -215,7 +227,6 @@ const formatNumber = (num: number | undefined) => {
 };
 
 const checkFollowStatus = async (id: number) => {
-  const userId = userStore.userId;
   try {
     const response = await checkUserFollowingSinger(userId, id);
     if (response.code === 0) {
