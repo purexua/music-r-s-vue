@@ -253,59 +253,6 @@ export async function getSingerInfoListByCountryAndGender(country: string, gende
     }
 }
 
-/**
- * 根据ID列表获取歌手简单信息
- * @param idList 歌手ID列表
- */
-export async function getSingerInfoByIdList(idList: number[]) {
-    try {
-        const response = await userClient.post(`/singers`, { ids: idList });
-        if (response.data.code === 0) {
-            return response.data;
-        } else {
-            throw new Error(response.data.message || '获取歌手简单信息列表失败');
-        }
-    } catch (error) {
-        console.error('获取歌手简单信息列表失败', error);
-        throw error;
-    }
-}
-
-/**
- * 根据ID列表获取音乐卡片信息
- * @param idList 音乐ID列表
- */
-export async function getMusicCardInfoByIdList(idList: number[]) {
-    try {
-        const response = await userClient.post(`/music-card`, { ids: idList });
-        if (response.data.code === 0) {
-            return response.data;
-        } else {
-            throw new Error(response.data.message || '获取音乐卡片信息列表失败');
-        }
-    } catch (error) {
-        console.error('获取音乐卡片信息列表失败', error);
-        throw error;
-    }
-}
-
-/**
- * 根据ID列表获取专辑信息
- * @param idList 专辑ID列表
- */
-export async function getAlbumInfoByIdList(idList: number[]) {
-    try {
-        const response = await userClient.post(`/albums`, { ids: idList });
-        if (response.data.code === 0) {
-            return response.data;
-        } else {
-            throw new Error(response.data.message || '获取专辑信息列表失败');
-        }
-    } catch (error) {
-        console.error('获取专辑信息列表失败', error);
-        throw error;
-    }
-}
 
 /**
  * 获取歌手详细信息
@@ -604,9 +551,14 @@ export async function unlikeAlbum(userId: number, albumId: number) {
  * 获取用户关注歌手ID列表
  * @param userId 用户ID
  */
-export async function getUserFollowedSingerIdList(userId: number) {
+export async function UserFollowedSingersInfoList(userId: number, limit: number, offset: number) {
     try {
-        const response = await userClient.get(`/users/${userId}/singers-id`);
+        const response = await userClient.get(`/users/${userId}/singers`, {
+            params: {
+                limit,
+                offset
+            }
+        });
         if (response.data.code === 0) {
             return response.data;
         } else {
@@ -622,9 +574,14 @@ export async function getUserFollowedSingerIdList(userId: number) {
  * 获取用户收藏的音乐ID列表
  * @param userId 用户ID
  */
-export async function getUserLikedMusicIdList(userId: number) {
+export async function getUserLikedMusicIdsList(userId: number, limit: number, offset: number) {
     try {
-        const response = await userClient.get(`/users/${userId}/musics-id`);
+        const response = await userClient.get(`/users/${userId}/musics`, {
+            params: {
+                limit,
+                offset
+            }
+        });
         if (response.data.code === 0) {
             return response.data;
         } else {
@@ -640,9 +597,14 @@ export async function getUserLikedMusicIdList(userId: number) {
  * 获取用户收藏的专辑ID列表
  * @param userId 用户ID
  */
-export async function getUserLikedAlbumIdList(userId: number) {
+export async function getUserLikedAlbumIdsList(userId: number, limit: number, offset: number) {
     try {
-        const response = await userClient.get(`/users/${userId}/albums-id`);
+        const response = await userClient.get(`/users/${userId}/albums`, {
+            params: {
+                limit,
+                offset
+            }
+        });
         if (response.data.code === 0) {
             return response.data;
         } else {
@@ -658,9 +620,14 @@ export async function getUserLikedAlbumIdList(userId: number) {
  * 获取用户收藏的歌单ID列表
  * @param userId 用户ID
  */
-export async function getUserLikedPlaylistIdList(userId: number) {
+export async function getUserLikedPlaylistIdsList(userId: number, limit: number, offset: number) {
     try {
-        const response = await userClient.get(`/users/${userId}/playlists-id`);
+        const response = await userClient.get(`/users/${userId}/playlists`, {
+            params: {
+                limit,
+                offset
+            }
+        });
         if (response.data.code === 0) {
             return response.data;
         } else {
@@ -1103,8 +1070,7 @@ export async function getTopLikeCountPlaylists(limit: number) {
  */
 export async function recommendFunctionUserPlayMusic(userId: number, musicId: number) {
     try {
-        const response = await userClient.post('/musics/rdc/user-play-music', {
-            user_id: userId,
+        const response = await userClient.post(`/users/${userId}/rdc/user-play-music`, {
             music_id: musicId
         });
         if (response.data.code === 0) {
@@ -1125,8 +1091,7 @@ export async function recommendFunctionUserPlayMusic(userId: number, musicId: nu
  */
 export async function recommendFunctionUserBrowsePlaylist(userId: number, playlistId: number) {
     try {
-        const response = await userClient.post('/playlists/rdc/user-browse-playlist', {
-            user_id: userId,
+        const response = await userClient.post(`/users/${userId}/rdc/user-browse-playlist`, {
             playlist_id: playlistId
         });
         if (response.data.code === 0) {
@@ -1147,8 +1112,7 @@ export async function recommendFunctionUserBrowsePlaylist(userId: number, playli
  */
 export async function recommendFunctionUserBrowseAlbum(userId: number, albumId: number) {
     try {
-        const response = await userClient.post('/albums/rdc/user-browse-album', {
-            user_id: userId,
+        const response = await userClient.post(`/users/${userId}/rdc/user-browse-album`, {
             album_id: albumId
         });
         if (response.data.code === 0) {
@@ -1169,8 +1133,7 @@ export async function recommendFunctionUserBrowseAlbum(userId: number, albumId: 
  */
 export async function recommendFunctionUserBrowseSinger(userId: number, singerId: number) {
     try {
-        const response = await userClient.post('/singers/rdc/user-browse-singer', {
-            user_id: userId,
+        const response = await userClient.post(`/users/${userId}/rdc/user-browse-singer`, {
             singer_id: singerId
         });
         if (response.data.code === 0) {
@@ -1184,35 +1147,13 @@ export async function recommendFunctionUserBrowseSinger(userId: number, singerId
     }
 }
 
-// ... 现有代码 ...
-
 /**
- * 推荐函数之构建用户画像 - music
+ * 推荐函数之构建用户画像
  * @param userId 用户ID
  */
-export async function recommendFunctionBuildUserProfileByMusic(userId: number) {
+export async function recommendFunctionBuildUserProfile(userId: number) {
     try {
-        const response = await userClient.post('/musics/rb', {
-            user_id: userId
-        });
-        if (response.data.code !== 0) {
-            throw new Error(response.data.message || '推荐函数之构建用户画像失败');
-        }
-    } catch (error) {
-        console.error('推荐函数之构建用户画像失败', error);
-        throw error;
-    }
-}
-
-/**
- * 推荐函数之构建用户画像 - singer
- * @param userId 用户ID
- */
-export async function recommendFunctionBuildUserProfileBySinger(userId: number) {
-    try {
-        const response = await userClient.post('/singers/rb', {
-            user_id: userId
-        });
+        const response = await userClient.post(`/users/${userId}/rb`);
         if (response.data.code !== 0) {
             throw new Error(response.data.message || '推荐函数之构建用户画像失败');
         }
@@ -1229,7 +1170,7 @@ export async function recommendFunctionBuildUserProfileBySinger(userId: number) 
  */
 export async function getRecommendedMusic(userId: number, limit: number) {
     try {
-        const response = await userClient.get(`/musics/feeds/${userId}`, {
+        const response = await userClient.get(`/users/feed/${userId}`, {
             params: { limit }
         });
         if (response.data.code === 0) {

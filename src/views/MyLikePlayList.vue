@@ -9,6 +9,12 @@
                         <p class="mt-6 text-lg leading-8 text-gray-500">这些是我收藏的精选歌单,每一个都代表着独特的音乐品味。</p>
                     </div>
                     <PlayListCard :playlists="likedPlaylists" />
+                    <div v-if="hasMore" class="flex justify-center mt-4">
+                        <button @click="loadMoreLikedPlaylists"
+                            class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition duration-300">
+                            加载更多
+                        </button>
+                    </div>
                 </div>
                 <div v-else class="flex flex-col items-center justify-center text-gray-500">
                     <MusicalNoteIcon class="w-16 h-16 mb-4 animate-bounce text-emerald-600" />
@@ -28,7 +34,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { PlaylistInfo } from '../types/global';
-import { getUserLikedPlaylistIdList, getPlaylistInfoListByIdList } from '../api/httpClient';
+import { getUserLikedPlaylistIdsList } from '../api/httpClient';
 import { useUserStore } from '../store/user';
 import PlayListCard from '../components/card/PlayListCard.vue';
 import { MusicalNoteIcon } from '@heroicons/vue/24/outline';
@@ -38,6 +44,9 @@ const userStore = useUserStore();
 
 const userId = userStore.getUserId()
 const likedPlaylists = ref<PlaylistInfo[]>([]);
+const hasMore = ref(false)
+const currentPage = ref(0)
+const pageSize = 8
 
 const navigateToDiscoverPlaylists = () => {
     router.push('/playlist-search'); // 假设有一个发现歌单的路由
@@ -45,20 +54,24 @@ const navigateToDiscoverPlaylists = () => {
 
 const fetchLikedPlaylists = async () => {
     try {
-        const likeResponse = await getUserLikedPlaylistIdList(userId);
-        const playlistIds = likeResponse.data.playlist_id_list || [];
-        if (playlistIds.length > 0) {
-            const playlistResponse = await getPlaylistInfoListByIdList(playlistIds);
-            likedPlaylists.value = playlistResponse.data.playlist_info_list || [];
+        const followResponse = await getUserLikedPlaylistIdsList(userId, pageSize, currentPage.value * pageSize)
+        if (followResponse.data.playlist_info_list && followResponse.data.playlist_info_list.length > 0) {
+            likedPlaylists.value = [...likedPlaylists.value, ...followResponse.data.playlist_info_list]
+            currentPage.value++
+            hasMore.value = followResponse.data.has_more
         } else {
-            likedPlaylists.value = [];
+            hasMore.value = false
         }
     } catch (error) {
-        console.error('获取收藏的歌单列表失败', error);
-        likedPlaylists.value = [];
-        // 这里可以添加错误处理逻辑,比如显示错误消息
+        console.error('获取关注歌手列表失败', error)
+        // 不要清空现有的歌手列表
+        hasMore.value = false
     }
 };
+
+const loadMoreLikedPlaylists = () => {
+    fetchLikedPlaylists()
+}
 
 onMounted(() => {
     fetchLikedPlaylists();

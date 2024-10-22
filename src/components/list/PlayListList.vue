@@ -215,9 +215,9 @@ import {
   likePlaylist,
   unlikePlaylist,
   getUserCreatedPlaylistList,
-  deletePlaylist
+  deletePlaylist,
+  createPlaylist
 } from '../../api/httpClient'
-import { createPlaylist } from '../../api/httpClient'
 import { useUserStore } from '../../store/user'
 
 const router = useRouter()

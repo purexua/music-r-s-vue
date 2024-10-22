@@ -14,9 +14,9 @@
             </div>
         </template> 
         <template v-else>
-            <div class="flex flex-col items-center justify-center h-64 bg-white rounded-lg shadow-md transition duration-300 ease-in-out hover:shadow-lg">
-                <RectangleStackIcon class="w-20 h-20 text-emerald-400 mb-4 animate-pulse" />
-                <p class="text-2xl font-semibold text-gray-800">暂无专辑</p>
+            <div class="flex flex-col items-center justify-center h-64 bg-white rounded-lg">
+                <RectangleStackIcon class="w-16 h-16 text-emerald-400 mb-4" />
+                <p class="text-xl font-semibold text-gray-800">暂无专辑</p>
                 <p class="text-sm text-gray-500 mt-2">该歌手目前没有可用的专辑</p>
             </div>
         </template>

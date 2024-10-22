@@ -18,7 +18,7 @@
 import { ref, onMounted } from 'vue'
 import { MusicInfo } from '../types/global'
 import { useUserStore } from '../store/user'
-import { recommendFunctionBuildUserProfileByMusic, recommendFunctionBuildUserProfileBySinger, getRecommendedMusic } from '../api/httpClient'
+import { recommendFunctionBuildUserProfile, getRecommendedMusic } from '../api/httpClient'
 import MusicList from '../components/list/MusicList.vue'
 import { useRouter } from 'vue-router'
 
@@ -46,14 +46,13 @@ async function loadCachedRecommendations() {
 }
 
 async function fetchInitialRecommendations() {
-  await recommendFunctionBuildUserProfileByMusic(userStore.userId)
-  await recommendFunctionBuildUserProfileBySinger(userStore.userId)
+  await recommendFunctionBuildUserProfile(userStore.userId)
   await fetchRecommendMusicList()
 }
 
 async function fetchRecommendMusicList() {
   const recommendList = await getRecommendedMusic(userStore.userId, limit)
-  recommendMusicList.value = [...recommendMusicList.value, ...recommendList.data]
+  recommendMusicList.value = [...recommendMusicList.value, ...recommendList.data.music_info_list]
   localStorage.setItem('recommendMusicList', JSON.stringify(recommendMusicList.value))
 }
 
