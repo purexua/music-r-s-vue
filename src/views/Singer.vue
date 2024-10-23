@@ -11,16 +11,16 @@
             <div class="my-4  mx-16">
                 <div class="sm:hidden">
                     <label for="country" class="sr-only">选择国家/地区</label>
-                    <select id="country" v-model="country" @change="handleCountryChange"
+                    <select id="country" v-model="country" @change="resetAndFetch"
                         class="block w-full rounded-md border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 mb-4">
                         <option v-for="option in countryOptions" :key="option.value" :value="option.value">{{
                             option.name }}</option>
                     </select>
                     <label for="gender" class="sr-only">选择性别</label>
-                    <select id="gender" v-model="gender" @change="handleGenderChange"
+                    <select id="gender" v-model="gender" @change="resetAndFetch"
                         class="block w-full rounded-md border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
                         <option v-for="option in genderOptions" :key="option.value" :value="option.value">{{ option.name
-                            }}</option>
+                        }}</option>
                     </select>
                 </div>
                 <div class="hidden sm:block">
@@ -62,18 +62,15 @@
                                 <div class="mt-1 flex items-center space-x-2">
                                     <span
                                         class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
-                                        {{ singer.main_genre }}
+                                        {{ singer.gender === 'male' ? '男' : '女' }}
                                     </span>
                                     <span class="text-xs text-gray-500">{{ getCountryName(singer.origin_country)
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </div>
                             <div class="ml-4 text-right">
                                 <p class="text-sm text-gray-600">
-                                    出道: {{ singer.debut_year }}
-                                </p>
-                                <p class="mt-1 text-sm font-medium text-gray-700">
-                                    粉丝: {{ formatFollowersCount(singer.followers_count) }}
+                                    出道: {{ singer.debut_year !== '0001' ? singer.debut_year : '未知' }}
                                 </p>
                             </div>
                         </div>
@@ -127,13 +124,11 @@ const countryOptions = [
     { name: '韩国', value: 'korea' },
 ];
 
-
 const genderOptions = [
     { name: '全部', value: '' },
     { name: '男', value: 'male' },
     { name: '女', value: 'female' },
 ];
-
 
 const navigateToSingerDetail = (singerId: number) => {
     router.push(`/singer-detail/${singerId}`);
@@ -147,29 +142,27 @@ const fetchSingers = async (isLoadMore = false) => {
             offset.value,
             limit.value
         );
-        if (response.code === 0) {
+        if (response.code === 0 && response.data && response.data.singer_list) {
             if (isLoadMore) {
-                singerList.value = [...singerList.value, ...response.data.singer_info_list];
+                singerList.value = [...singerList.value, ...response.data.singer_list];
             } else {
                 singerList.value = response.data.singer_list;
             }
-            hasMore.value = response.data.has_more;
+            hasMore.value = 'has_more' in response.data;
         } else {
             console.error('获取歌手列表失败:', response.msg);
+            if (!isLoadMore) {
+                singerList.value = [];
+            }
+            hasMore.value = false;
         }
     } catch (error) {
         console.error('获取歌手列表出错:', error);
+        if (!isLoadMore) {
+            singerList.value = [];
+        }
+        hasMore.value = false;
     }
-};
-
-const handleCountryChange = (event: Event) => {
-    const target = event.target as HTMLSelectElement;
-    selectCountry(target.value);
-};
-
-const handleGenderChange = (event: Event) => {
-    const target = event.target as HTMLSelectElement;
-    selectGender(target.value);
 };
 
 const selectCountry = (value: string) => {
@@ -189,17 +182,8 @@ const resetAndFetch = () => {
 };
 
 const loadMore = () => {
-    if (hasMore.value) {
-        offset.value += limit.value;
-        fetchSingers(true);
-    }
-};
-
-const formatFollowersCount = (count: number): string => {
-    if (count >= 10000) {
-        return (count / 10000).toFixed(1) + '万';
-    }
-    return count.toString();
+    offset.value += limit.value;
+    fetchSingers(true);
 };
 
 const getCountryName = (countryCode: string): string => {
@@ -212,4 +196,6 @@ onMounted(() => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+/* 如果需要，可以在这里添加自定义样式 */
+</style>

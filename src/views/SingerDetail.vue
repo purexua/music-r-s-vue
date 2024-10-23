@@ -52,8 +52,14 @@
               <span class="font-medium">艺名：</span>{{ singerInfo.stage_name }}
             </div>
             <div class="text-gray-600">
-              <span class="font-medium">主要流派：</span>{{ singerInfo.main_genre }}
-            </div>
+  <span class="font-medium">主要流派：</span>
+  <div class="mt-1 flex flex-wrap gap-2">
+    <span v-for="genre in formatGenres(singerInfo.main_genre)" :key="genre" 
+          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+      {{ genre }}
+    </span>
+  </div>
+</div>
             <div class="text-gray-600">
               <span class="font-medium">性别：</span>{{ singerInfo.gender === 'male' ? '男' : '女' }}
             </div>
@@ -214,6 +220,14 @@ const fetchSingerInfo = async (id: number) => {
   } catch (error) {
     console.error('获取歌手信息出错:', error);
   }
+};
+
+const formatGenres = (genres: string) => {
+  return genres.split('-').map(genre => 
+    genre.split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ')
+  );
 };
 
 const formatDate = (dateString: string) => {

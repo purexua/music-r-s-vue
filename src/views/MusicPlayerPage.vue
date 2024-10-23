@@ -34,7 +34,7 @@
               <FaceSmileIcon class="h-5 w-5 text-yellow-500"/>
               <span class="text-sm font-medium text-gray-700">情感:</span>
               <div class="flex flex-wrap gap-1">
-                <span v-for="emotion in musicInfo?.emotions.split(',')" :key="emotion"
+                <span v-for="emotion in musicInfo?.emotions.split('-')" :key="emotion"
                       class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
                   {{ emotion.trim() }}
                 </span>
@@ -44,7 +44,7 @@
               <MusicalNoteIcon class="h-5 w-5 text-blue-500"/>
               <span class="text-sm font-medium text-gray-700">流派:</span>
               <div class="flex flex-wrap gap-1">
-                <span v-for="genre in musicInfo?.genres.split(',')" :key="genre"
+                <span v-for="genre in musicInfo?.genres.split('-')" :key="genre"
                       class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
                   {{ genre.trim() }}
                 </span>
@@ -54,7 +54,7 @@
               <WrenchScrewdriverIcon class="h-5 w-5 text-purple-500"/>
               <span class="text-sm font-medium text-gray-700">乐器:</span>
               <div class="flex flex-wrap gap-1">
-                <span v-for="instrument in musicInfo?.instruments.split(',')" :key="instrument"
+                <span v-for="instrument in musicInfo?.instruments.split('-')" :key="instrument"
                       class="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
                   {{ instrument.trim() }}
                 </span>

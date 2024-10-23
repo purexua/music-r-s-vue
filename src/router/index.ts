@@ -126,6 +126,10 @@ const router = createRouter({
             ],
         },
         {
+            path: '/upload',
+            component: () => import('../views/Upload.vue'),
+        },
+        {
             path: '/login',
             component: () => import('../components/Login.vue'),
         },

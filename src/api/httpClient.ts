@@ -76,6 +76,96 @@ function saveUserTokenToLocalStorage(userData: LoginResponse | RegisterResponse)
 // API 函数
 
 /**
+ * 上传歌手信息
+ * @param singerInfo 歌手信息
+ * @param file 歌手头像文件
+ */
+export async function uploadSingerInfo(singerInfo: any, file: File) {
+    try {
+        const formData = new FormData();
+        formData.append('singerInfo', JSON.stringify(singerInfo));
+        formData.append('file', file);
+
+        const response = await userClient.post('/admin/singer/upload', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '上传歌手信息失败');
+        }
+    } catch (error) {
+        console.error('上传歌手信息失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 上传音乐信息
+ * @param musicInfo 音乐信息
+ * @param musicFile 音乐文件
+ * @param coverFile 封面文件
+ * @param lyricFile 歌词文件（可选）
+ */
+export async function uploadMusicInfo(musicInfo: any, musicFile: File, coverFile: File, lyricFile?: File) {
+    try {
+        const formData = new FormData();
+        formData.append('musicInfo', JSON.stringify(musicInfo));
+        formData.append('musicFile', musicFile);
+        formData.append('coverFile', coverFile);
+        if (lyricFile) {
+            formData.append('lyricFile', lyricFile);
+        }
+
+        const response = await userClient.post('/admin/music/upload', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '上传音乐信息失败');
+        }
+    } catch (error) {
+        console.error('上传音乐信息失败', error);
+        throw error;
+    }
+}
+
+/**
+ * 上传专辑信息
+ * @param albumInfo 专辑信息
+ * @param coverFile 专辑封面文件
+ */
+export async function uploadAlbumInfo(albumInfo: any, coverFile: File) {
+    try {
+        const formData = new FormData();
+        formData.append('albumInfo', JSON.stringify(albumInfo));
+        formData.append('file', coverFile);
+
+        const response = await userClient.post('/admin/album/upload', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        if (response.data.code === 0) {
+            return response.data;
+        } else {
+            throw new Error(response.data.message || '上传专辑信息失败');
+        }
+    } catch (error) {
+        console.error('上传专辑信息失败', error);
+        throw error;
+    }
+}
+
+/**
  * 用户登录
  * @param username 用户名
  * @param password 密码
