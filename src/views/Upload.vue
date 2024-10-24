@@ -61,9 +61,9 @@
                             <div class="mt-1">
                                 <select id="singer-gender" v-model="singerInfo.gender"
                                     class="shadow-sm focus:ring-emerald-500 focus:border-emerald-500 block w-full sm:text-sm border-gray-300 rounded-md">
-                                    <option value="男">男</option>
-                                    <option value="女">女</option>
-                                    <option value="其他">其他</option>
+                                    <option value="male">男</option>
+                                    <option value="female">女</option>
+                                    <option value="other">其他</option>
                                 </select>
                             </div>
                         </div>

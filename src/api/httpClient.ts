@@ -86,7 +86,7 @@ export async function uploadSingerInfo(singerInfo: any, file: File) {
         formData.append('singerInfo', JSON.stringify(singerInfo));
         formData.append('file', file);
 
-        const response = await userClient.post('/admin/singer/upload', formData, {
+        const response = await userClient.post('/admin/singers', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
@@ -120,7 +120,7 @@ export async function uploadMusicInfo(musicInfo: any, musicFile: File, coverFile
             formData.append('lyricFile', lyricFile);
         }
 
-        const response = await userClient.post('/admin/music/upload', formData, {
+        const response = await userClient.post('/admin/musics', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
@@ -148,7 +148,7 @@ export async function uploadAlbumInfo(albumInfo: any, coverFile: File) {
         formData.append('albumInfo', JSON.stringify(albumInfo));
         formData.append('file', coverFile);
 
-        const response = await userClient.post('/admin/album/upload', formData, {
+        const response = await userClient.post('/admin/albums', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
@@ -172,7 +172,7 @@ export async function uploadAlbumInfo(albumInfo: any, coverFile: File) {
  */
 export async function login(username: string, password: string) {
     try {
-        const response = await userClient.post('/auth', { username, password });
+        const response = await userClient.post('/login', { username, password });
         if (response.data.code === 0) {
             saveUserTokenToLocalStorage(response.data.data);
         }
@@ -208,7 +208,7 @@ export async function register(username: string, password: string) {
 async function refreshToken(userId: number) {
     const refresh_token = localStorage.getItem('refresh_token');
     try {
-        return await userClient.get(`/auth/refresh/${userId}`, {
+        return await userClient.get(`/users/${userId}/refresh-token`, {
             headers: { 'RefreshToken': refresh_token }
         });
     } catch (error) {
@@ -459,7 +459,7 @@ export async function getAlbumById(id: number) {
  */
 export async function getSingerMusicCardInfoById(id: number, limit: number, offset: number) {
     try {
-        const response = await userClient.get(`/singers/${id}/music-card`, {
+        const response = await userClient.get(`/singers/${id}/music-cards`, {
             params: { limit, offset }
         });
         if (response.data.code === 0) {
@@ -503,7 +503,7 @@ export async function getSingerAlbumInfoById(id: number, limit: number, offset: 
  */
 export async function getAlbumMusicCardInfoById(id: number, limit: number, offset: number) {
     try {
-        const response = await userClient.get(`/albums/${id}/music-card`, {
+        const response = await userClient.get(`/albums/${id}/music-cards`, {
             params: { limit, offset }
         });
         if (response.data.code === 0) {
@@ -712,7 +712,7 @@ export async function getUserLikedAlbumIdsList(userId: number, limit: number, of
  */
 export async function getUserLikedPlaylistIdsList(userId: number, limit: number, offset: number) {
     try {
-        const response = await userClient.get(`/users/${userId}/playlists`, {
+        const response = await userClient.get(`/users/${userId}/playlists/liked`, {
             params: {
                 limit,
                 offset
@@ -735,7 +735,7 @@ export async function getUserLikedPlaylistIdsList(userId: number, limit: number,
  */
 export async function getUserCreatedPlaylistList(userId: number) {
     try {
-        const response = await userClient.get(`/playlists/user/${userId}`);
+        const response = await userClient.get(`/users/${userId}/playlists`);
         return response.data;
     } catch (error) {
         console.error('获取用户创建过的歌单列表失败', error);
@@ -750,7 +750,7 @@ export async function getUserCreatedPlaylistList(userId: number) {
  */
 export async function likePlaylist(userId: number, playlistId: number) {
     try {
-        const response = await userClient.post(`/users/${userId}/playlists/${playlistId}`);
+        const response = await userClient.post(`/users/${userId}/playlists/liked/${playlistId}`);
         if (response.data.code === 0) {
             return response.data;
         } else {
@@ -769,7 +769,7 @@ export async function likePlaylist(userId: number, playlistId: number) {
  */
 export async function unlikePlaylist(userId: number, playlistId: number) {
     try {
-        const response = await userClient.delete(`/users/${userId}/playlists/${playlistId}`);
+        const response = await userClient.delete(`/users/${userId}/playlists/liked/${playlistId}`);
         if (response.data.code === 0) {
             return response.data;
         } else {
@@ -788,7 +788,7 @@ export async function unlikePlaylist(userId: number, playlistId: number) {
  */
 export async function checkUserLikedPlaylist(userId: number, playlistId: number) {
     try {
-        const response = await userClient.get(`/users/${userId}/playlists/${playlistId}`);
+        const response = await userClient.get(`/users/${userId}/playlists/liked/${playlistId}`);
         return response.data;
     } catch (error) {
         console.error('检查用户是否收藏歌单失败', error);
@@ -818,7 +818,7 @@ export async function getPlaylistDetail(id: number) {
  */
 export async function getPlaylistMusicCardList(id: number, offset: number, limit: number) {
     try {
-        const response = await userClient.get(`/playlists/${id}/music-card`, {
+        const response = await userClient.get(`/playlists/${id}/music-cards`, {
             params: { offset, limit }
         });
         if (response.data.code === 0) {
@@ -874,11 +874,10 @@ export async function getPlaylistInfoListByIdList(idList: number[]) {
  */
 export async function createPlaylist(playlistName: string, tags: string, description: string, userId: number) {
     try {
-        const response = await userClient.post('/playlists/add', {
+        const response = await userClient.post(`/users/${userId}/playlists`, {
             playlist_name: playlistName,
             tags,
             description,
-            user_id: userId
         });
         if (response.data.code === 0) {
             return response.data;
@@ -893,14 +892,15 @@ export async function createPlaylist(playlistName: string, tags: string, descrip
 
 /**
  * 更新歌单信息
- * @param id 歌单ID
+ * @param userId 用户ID
+ * @param playlistId 歌单ID
  * @param playlistName 歌单名称
  * @param tags 标签
  * @param description 描述
  */
-export async function updatePlaylist(id: number, playlistName: string, tags: string, description: string) {
+export async function updatePlaylist(userId: number, playlistId: number, playlistName: string, tags: string, description: string) {
     try {
-        const response = await userClient.put(`/playlists/${id}`, {
+        const response = await userClient.put(`/users/${userId}/playlists/${playlistId}`, { 
             playlist_name: playlistName,
             tags,
             description
@@ -918,11 +918,12 @@ export async function updatePlaylist(id: number, playlistName: string, tags: str
 
 /**
  * 删除歌单
- * @param id 歌单ID
+ * @param userId 用户ID
+ * @param playlistId 歌单ID
  */
-export async function deletePlaylist(id: number) {
+export async function deletePlaylist(userId: number, playlistId: number) {
     try {
-        const response = await userClient.delete(`/playlists/${id}`);
+        const response = await userClient.delete(`/users/${userId}/playlists/${playlistId}`);
         if (response.data.code === 0) {
             return response.data;
         } else {
@@ -981,7 +982,7 @@ export async function removeMusicFromPlaylist(playlistId: number, musicId: numbe
  */
 export async function GetUserCreatedPlaylistNameAndMusicIsAdded(userId: number, musicId: number) {
     try {
-        const response = await userClient.get(`/playlists/user/${userId}/music-is-added/${musicId}`);
+        const response = await userClient.get(`/users/${userId}/playlists/music-is-added/${musicId}`);
         if (response.data.code === 0) {
             return response.data;
         } else {
@@ -999,7 +1000,7 @@ export async function GetUserCreatedPlaylistNameAndMusicIsAdded(userId: number, 
  */
 export async function getLatestMusics(limit: number) {
     try {
-        const response = await userClient.get('/musics/r/latest', {
+        const response = await userClient.get('/musics/latest', {
             params: { limit }
         });
         if (response.data.code === 0) {
@@ -1019,7 +1020,7 @@ export async function getLatestMusics(limit: number) {
  */
 export async function getTopPlayCountMusics(limit: number) {
     try {
-        const response = await userClient.get('/musics/r/top-play-count', {
+        const response = await userClient.get('/musics/top-played', {
             params: { limit }
         });
         if (response.data.code === 0) {
@@ -1039,7 +1040,7 @@ export async function getTopPlayCountMusics(limit: number) {
  */
 export async function getTopLikeCountMusics(limit: number) {
     try {
-        const response = await userClient.get('/musics/r/top-like-count', {
+        const response = await userClient.get('/musics/top-liked', {
             params: { limit }
         });
         if (response.data.code === 0) {
@@ -1059,7 +1060,7 @@ export async function getTopLikeCountMusics(limit: number) {
  */
 export async function getTopCommentCountMusics(limit: number) {
     try {
-        const response = await userClient.get('/musics/r/top-comment-count', {
+        const response = await userClient.get('/musics/top-commented', {
             params: { limit }
         });
         if (response.data.code === 0) {
@@ -1079,7 +1080,7 @@ export async function getTopCommentCountMusics(limit: number) {
  */
 export async function getLatestAlbums(limit: number) {
     try {
-        const response = await userClient.get('/albums/r/latest', {
+        const response = await userClient.get('/albums/latest', {
             params: { limit }
         });
         if (response.data.code === 0) {
@@ -1099,7 +1100,7 @@ export async function getLatestAlbums(limit: number) {
  */
 export async function getTopLikeCountAlbums(limit: number) {
     try {
-        const response = await userClient.get('/albums/r/top-like-count', {
+        const response = await userClient.get('/albums/top-liked', {
             params: { limit }
         });
         if (response.data.code === 0) {
@@ -1119,7 +1120,7 @@ export async function getTopLikeCountAlbums(limit: number) {
  */
 export async function getLatestPlaylists(limit: number) {
     try {
-        const response = await userClient.get('/playlists/r/latest', {
+        const response = await userClient.get('/playlists/latest', {
             params: { limit }
         });
         if (response.data.code === 0) {
@@ -1139,7 +1140,7 @@ export async function getLatestPlaylists(limit: number) {
  */
 export async function getTopLikeCountPlaylists(limit: number) {
     try {
-        const response = await userClient.get('/playlists/r/top-like-count', {
+        const response = await userClient.get('/playlists/top-liked', {
             params: { limit }
         });
         if (response.data.code === 0) {
@@ -1160,7 +1161,7 @@ export async function getTopLikeCountPlaylists(limit: number) {
  */
 export async function recommendFunctionUserPlayMusic(userId: number, musicId: number) {
     try {
-        const response = await userClient.post(`/users/${userId}/rdc/user-play-music`, {
+        const response = await userClient.post(`/users/${userId}/data-collect/play-music`, {
             music_id: musicId
         });
         if (response.data.code === 0) {
@@ -1181,7 +1182,7 @@ export async function recommendFunctionUserPlayMusic(userId: number, musicId: nu
  */
 export async function recommendFunctionUserBrowsePlaylist(userId: number, playlistId: number) {
     try {
-        const response = await userClient.post(`/users/${userId}/rdc/user-browse-playlist`, {
+        const response = await userClient.post(`/users/${userId}/data-collect/browse-playlist`, {
             playlist_id: playlistId
         });
         if (response.data.code === 0) {
@@ -1202,7 +1203,7 @@ export async function recommendFunctionUserBrowsePlaylist(userId: number, playli
  */
 export async function recommendFunctionUserBrowseAlbum(userId: number, albumId: number) {
     try {
-        const response = await userClient.post(`/users/${userId}/rdc/user-browse-album`, {
+        const response = await userClient.post(`/users/${userId}/data-collect/browse-album`, {
             album_id: albumId
         });
         if (response.data.code === 0) {
@@ -1223,7 +1224,7 @@ export async function recommendFunctionUserBrowseAlbum(userId: number, albumId: 
  */
 export async function recommendFunctionUserBrowseSinger(userId: number, singerId: number) {
     try {
-        const response = await userClient.post(`/users/${userId}/rdc/user-browse-singer`, {
+        const response = await userClient.post(`/users/${userId}/data-collect/browse-singer`, {
             singer_id: singerId
         });
         if (response.data.code === 0) {
@@ -1243,7 +1244,7 @@ export async function recommendFunctionUserBrowseSinger(userId: number, singerId
  */
 export async function recommendFunctionBuildUserProfile(userId: number) {
     try {
-        const response = await userClient.post(`/users/${userId}/rb`);
+        const response = await userClient.post(`/users/${userId}/profile/build`);
         if (response.data.code !== 0) {
             throw new Error(response.data.message || '推荐函数之构建用户画像失败');
         }
@@ -1260,7 +1261,7 @@ export async function recommendFunctionBuildUserProfile(userId: number) {
  */
 export async function getRecommendedMusic(userId: number, limit: number) {
     try {
-        const response = await userClient.get(`/users/feed/${userId}`, {
+        const response = await userClient.get(`/users/${userId}/recommend/musics`, {
             params: { limit }
         });
         if (response.data.code === 0) {

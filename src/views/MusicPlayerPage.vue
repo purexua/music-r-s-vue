@@ -291,7 +291,7 @@ async function fetchMusicInfo(id: number) {
   try {
     const {data} = await getMusicById(id)
     musicInfo.value = data
-    await fetchLyrics(data.lyrics_url)
+    lyrics.value = await fetchLyrics(data.lyrics_url)
     resetAudioPlayer()
 
     if (userStore.isLoggedIn) {
@@ -303,31 +303,44 @@ async function fetchMusicInfo(id: number) {
   }
 }
 
-async function fetchLyrics(url: string) {
+async function fetchLyrics(url: string): Promise<LyricLine[]> {
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      console.error("获取歌词失败")
+      return [];
     }
     const lyricsText = await response.text();
-    return parseLyrics(lyricsText);
+    const parsedLyrics = parseLyrics(lyricsText);
+    return parsedLyrics;
   } catch (error) {
+    console.error("获取歌词时发生错误:", error);
     return [];
   }
 }
 
 function parseLyrics(lyricsText: string): LyricLine[] {
-  return lyricsText.split('\n')
-      .map(line => {
-        const match = line.match(/\[(\d{2}):(\d{2})\.(\d{2})](.*)/)
-        if (match) {
-          const [, minutes, seconds, milliseconds, text] = match
-          const time = parseInt(minutes) * 60 + parseInt(seconds) + parseInt(milliseconds) / 100
-          return {time, text: text.trim()}
-        }
-        return null
-      })
-      .filter((line): line is LyricLine => line !== null)
+  const lines = lyricsText.split('\n');
+  
+  const parsedLines = lines
+    .map((line, index) => {
+      // 忽略空行或只包含空白字符的行
+      if (line.trim() === '') {
+        return null;
+      }
+
+      const match = line.match(/\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/)
+      if (match) {
+        const [, minutes, seconds, milliseconds, text] = match
+        const time = parseInt(minutes) * 60 + parseInt(seconds) + parseInt(milliseconds) / (milliseconds.length === 2 ? 100 : 1000)
+        return { time, text: text.trim() }
+      } else {
+        console.log(`第 ${index + 1} 行无法解析: "${line}"`);
+        return null;
+      }
+    })
+    .filter((line): line is LyricLine => line !== null && line.text !== '');
+
+  return parsedLines;
 }
 
 function setupAudioEventListeners() {

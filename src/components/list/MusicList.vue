@@ -25,15 +25,25 @@
                 </div>
                 <div class="mt-2">
                     <div class="flex flex-wrap gap-1">
-                        <span class="px-1.5 py-0.5 text-[10px] rounded-full bg-pink-100 text-pink-800">
-                            {{ music.emotions }}
-                        </span>
-                        <span class="px-1.5 py-0.5 text-[10px] rounded-full bg-blue-100 text-blue-800">
-                            {{ music.genres }}
-                        </span>
-                        <span class="px-1.5 py-0.5 text-[10px] rounded-full bg-green-100 text-green-800">
-                            {{ music.instruments }}
-                        </span>
+                        <template v-if="music.emotions" v-for="(emotion, index) in music.emotions.split('-')" :key="`emotion-${index}`">
+                            <span v-if="emotion.trim()"
+                                class="px-1.5 py-0.5 text-[10px] rounded-full bg-pink-100 text-pink-800">
+                                {{ emotion.trim() }}
+                            </span>
+                        </template>
+                        <template v-if="music.genres" v-for="(genre, index) in music.genres.split('-')" :key="`genre-${index}`">
+                            <span v-if="genre.trim()"
+                                class="px-1.5 py-0.5 text-[10px] rounded-full bg-blue-100 text-blue-800">
+                                {{ genre.trim() }}
+                            </span>
+                        </template>
+                        <template v-if="music.instruments" v-for="(instrument, index) in music.instruments.split('-')"
+                            :key="`instrument-${index}`">
+                            <span v-if="instrument.trim()"
+                                class="px-1.5 py-0.5 text-[10px] rounded-full bg-green-100 text-green-800">
+                                {{ instrument.trim() }}
+                            </span>
+                        </template>
                     </div>
                 </div>
             </div>
